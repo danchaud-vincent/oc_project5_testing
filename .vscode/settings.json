@@ -1,4 +1,9 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "typescript.tsconfigPaths": [
+        "tsconfig.json",
+        "tsconfig.spec.json",
+        "cypress/tsconfig.json"
+    ]
 }
