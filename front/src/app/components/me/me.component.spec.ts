@@ -6,8 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
-import { expect } from '@jest/globals';
+import { expect, it } from '@jest/globals';
 import { MeComponent } from './me.component';
+import { By } from '@angular/platform-browser';
 
 describe('MeComponent', () => {
   let component: MeComponent;
@@ -38,7 +39,17 @@ describe('MeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('Unit Tests', () => {
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should display the user page title', () => {
+      const titleContainer = fixture.debugElement.query(
+        By.css('[data-test="user-title"]')
+      );
+
+      expect(titleContainer.nativeElement.textContent).toBe('User information');
+    });
   });
 });
