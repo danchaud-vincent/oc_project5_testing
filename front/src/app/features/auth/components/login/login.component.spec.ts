@@ -19,6 +19,9 @@ import { Router } from '@angular/router';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let router: Router;
+  let authService: AuthService;
+  let sessionService: SessionService;
 
   const mockLoginRequest = {
     email: 'test@test.com',
@@ -161,6 +164,35 @@ describe('LoginComponent', () => {
 
       // ASSERT
       expect(component.onError).toBe(true);
+    });
+  });
+
+  describe('Integration Test Suite', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [LoginComponent],
+        providers: [SessionService, AuthService],
+        imports: [
+          RouterTestingModule,
+          BrowserAnimationsModule,
+          HttpClientModule,
+          MatCardModule,
+          MatIconModule,
+          MatFormFieldModule,
+          MatInputModule,
+          ReactiveFormsModule,
+          RouterTestingModule,
+        ],
+      }).compileComponents();
+
+      // inject service
+      authService = TestBed.inject(AuthService);
+      sessionService = TestBed.inject(SessionService);
+      router = TestBed.inject(Router);
+
+      fixture = TestBed.createComponent(LoginComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
   });
 });
