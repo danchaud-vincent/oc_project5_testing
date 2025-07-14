@@ -98,5 +98,16 @@ describe('MeComponent', () => {
       // ASSERT
       expect(component).toBeTruthy();
     });
+
+    it('should load user information on ngOnInit', () => {
+      // ARRANGE
+      mockUserService.getById.mockReturnValue(of(mockUser));
+
+      // ACT
+      fixture.detectChanges();
+
+      // ASSERT
+      expect(component.user).toEqual(mockUser);
+    });
   });
 });
