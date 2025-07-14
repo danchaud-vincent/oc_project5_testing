@@ -1,5 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +20,7 @@ import { LoginRequest } from '../../interfaces/loginRequest.interface';
 import { of, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { getByDataTest } from 'src/test-utils/test-utils';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -181,7 +187,6 @@ describe('LoginComponent', () => {
           MatFormFieldModule,
           MatInputModule,
           ReactiveFormsModule,
-          RouterTestingModule,
         ],
       }).compileComponents();
 
@@ -190,9 +195,57 @@ describe('LoginComponent', () => {
       sessionService = TestBed.inject(SessionService);
       router = TestBed.inject(Router);
 
+      sessionService.sessionInformation = mockSessionService.sessionInformation;
+
       fixture = TestBed.createComponent(LoginComponent);
       component = fixture.componentInstance;
       fixture.detectChanges();
     });
+
+    it('should login with valid login request', fakeAsync(() => {
+      // ARRANGE
+      const spyAuthLogin = jest
+        .spyOn(authService, 'login')
+        .mockReturnValue(of(mockSessionService.sessionInformation));
+      const spySessionLogin = jest.spyOn(sessionService, 'logIn');
+      const spyNavigate = jest
+        .spyOn(router, 'navigate')
+        .mockReturnValue(Promise.resolve(true));
+      const emailInputEl = getByDataTest(fixture, 'email') as HTMLInputElement;
+      const passwordInputEl = getByDataTest(
+        fixture,
+        'password'
+      ) as HTMLInputElement;
+      const submitBtnEl = getByDataTest(
+        fixture,
+        'submit-btn'
+      ) as HTMLButtonElement;
+      const errorEl = getByDataTest(fixture, 'error');
+
+      // ACT
+      emailInputEl.value = mockLoginRequest.email;
+      emailInputEl.dispatchEvent(new Event('input'));
+      passwordInputEl.value = mockLoginRequest.password;
+      passwordInputEl.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT SUBMIT
+      expect(submitBtnEl.disabled).toBeFalsy(); // valid form so submit enabled
+
+      // ACT
+      submitBtnEl.click();
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT
+      expect(spyAuthLogin).toHaveBeenCalledWith(mockLoginRequest);
+      expect(spySessionLogin).toHaveBeenCalledWith(
+        mockSessionService.sessionInformation
+      );
+      expect(spyNavigate).toHaveBeenCalledWith(['/sessions']);
+      expect(component.onError).toBeFalsy();
+      expect(errorEl).toBeNull();
+    }));
   });
 });
