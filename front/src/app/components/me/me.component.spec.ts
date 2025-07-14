@@ -177,7 +177,7 @@ describe('MeComponent', () => {
       component = fixture.componentInstance;
     });
 
-    it('should fetch and display admin data in the DOM on ngOnInit', () => {
+    it('should fetch user data and display admin specific data in the DOM on init', () => {
       // ARRANGE
       const spyGetById = jest
         .spyOn(userService, 'getById')
