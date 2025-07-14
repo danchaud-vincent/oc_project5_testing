@@ -8,13 +8,20 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SessionService } from '../../services/session.service';
 
 import { MeComponent } from './me.component';
-import { first, of } from 'rxjs';
+import { of } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { DatePipe } from '@angular/common';
+import { getByDataTest } from 'src/test-utils/test-utils';
 
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
+  let userService: UserService;
+  let sessionService: SessionService;
+  let router: Router;
+  let matSnackBar: MatSnackBar;
 
   const mockAdmin = {
     id: 1,
@@ -153,20 +160,54 @@ describe('MeComponent', () => {
           MatFormFieldModule,
           MatIconModule,
           MatInputModule,
+          RouterTestingModule,
         ],
-        providers: [UserService, SessionService, Router, MatSnackBar],
+        providers: [UserService, SessionService, MatSnackBar],
       }).compileComponents();
 
       // inject
-      const userService: UserService = TestBed.inject(UserService);
-      const sessionService: SessionService = TestBed.inject(SessionService);
-      const router: Router = TestBed.inject(Router);
-      const matSnackBar: MatSnackBar = TestBed.inject(MatSnackBar);
+      userService = TestBed.inject(UserService);
+      sessionService = TestBed.inject(SessionService);
+      router = TestBed.inject(Router);
+      matSnackBar = TestBed.inject(MatSnackBar);
+
+      sessionService.sessionInformation = mockSessionService.sessionInformation;
 
       fixture = TestBed.createComponent(MeComponent);
       component = fixture.componentInstance;
+    });
 
-      it('should fetch and display user data in the DOM on ngOnInit', () => {});
+    it('should fetch and display admin data in the DOM on ngOnInit', () => {
+      // ARRANGE
+      const spyGetById = jest
+        .spyOn(userService, 'getById')
+        .mockReturnValue(of(mockAdmin));
+      const sessionId: string =
+        mockSessionService.sessionInformation.id.toString();
+      const pipe = new DatePipe('en-US');
+      const createdAt = pipe.transform(mockAdmin.createdAt, 'longDate');
+      const updatedAt = pipe.transform(mockAdmin.updatedAt, 'longDate');
+
+      // ACT
+      fixture.detectChanges();
+
+      const nameEl: HTMLElement = getByDataTest(fixture, 'name');
+      const emailEl: HTMLElement = getByDataTest(fixture, 'email');
+      const adminEl: HTMLElement = getByDataTest(fixture, 'admin');
+      const createDateEl: HTMLElement = getByDataTest(fixture, 'createdDate');
+      const updateDateEl: HTMLElement = getByDataTest(fixture, 'updatedDate');
+      const deleteBtnEl: HTMLElement = getByDataTest(fixture, 'delete-btn');
+
+      // ASSERT
+      expect(spyGetById).toHaveBeenCalledWith(sessionId);
+      expect(nameEl.textContent).toBe(
+        `Name: ${mockAdmin.firstName} ${mockAdmin.lastName.toUpperCase()}`
+      );
+      expect(emailEl.textContent).toBe(`Email: ${mockAdmin.email}`);
+      expect(adminEl.textContent).not.toBeNull();
+      expect(deleteBtnEl).toBeNull();
+      expect(createDateEl.textContent).toBe(`Create at:  ${createdAt}`);
+      expect(updateDateEl.textContent).toBe(`Last update:  ${updatedAt}`);
     });
   });
 });
