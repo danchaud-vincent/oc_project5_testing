@@ -99,7 +99,7 @@ describe('MeComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should load user information on ngOnInit', () => {
+    it('should call userService.getById and set user data on ngOnInit', () => {
       // ARRANGE
       mockUserService.getById.mockReturnValue(of(mockUser));
 
