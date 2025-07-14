@@ -109,5 +109,16 @@ describe('MeComponent', () => {
       // ASSERT
       expect(component.user).toEqual(mockUser);
     });
+
+    it('should call window.history.back when back() is called', () => {
+      // ARRANGE
+      const spyWindowBack = jest.spyOn(window.history, 'back');
+
+      // ACT
+      component.back();
+
+      // ASSERT
+      expect(spyWindowBack).toHaveBeenCalled();
+    });
   });
 });
