@@ -141,4 +141,32 @@ describe('MeComponent', () => {
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
   });
+
+  describe('Integration Test Suite', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [MeComponent],
+        imports: [
+          MatSnackBarModule,
+          HttpClientModule,
+          MatCardModule,
+          MatFormFieldModule,
+          MatIconModule,
+          MatInputModule,
+        ],
+        providers: [UserService, SessionService, Router, MatSnackBar],
+      }).compileComponents();
+
+      // inject
+      const userService: UserService = TestBed.inject(UserService);
+      const sessionService: SessionService = TestBed.inject(SessionService);
+      const router: Router = TestBed.inject(Router);
+      const matSnackBar: MatSnackBar = TestBed.inject(MatSnackBar);
+
+      fixture = TestBed.createComponent(MeComponent);
+      component = fixture.componentInstance;
+
+      it('should fetch and display user data in the DOM on ngOnInit', () => {});
+    });
+  });
 });
