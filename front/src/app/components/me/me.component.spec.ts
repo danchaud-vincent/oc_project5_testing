@@ -1,5 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +19,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DatePipe } from '@angular/common';
 import { getByDataTest } from 'src/test-utils/test-utils';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('MeComponent', () => {
   let component: MeComponent;
@@ -161,6 +167,7 @@ describe('MeComponent', () => {
           MatIconModule,
           MatInputModule,
           RouterTestingModule,
+          NoopAnimationsModule,
         ],
         providers: [UserService, SessionService, MatSnackBar],
       }).compileComponents();
@@ -215,6 +222,7 @@ describe('MeComponent', () => {
       const spyWindowBack = jest.spyOn(window.history, 'back');
 
       // ACT
+      fixture.detectChanges();
       const btnBack: HTMLButtonElement = fixture.nativeElement.querySelector(
         '[data-test="back-btn"]'
       );
@@ -223,5 +231,38 @@ describe('MeComponent', () => {
       // ASSERT
       expect(spyWindowBack).toHaveBeenCalled();
     });
+
+    it('should delete a user and perform a logout and navigation on delete', fakeAsync(() => {
+      // ARRANGE
+      const spyGetById = jest
+        .spyOn(userService, 'getById')
+        .mockReturnValue(of(mockUser));
+      const spyDelete = jest
+        .spyOn(userService, 'delete')
+        .mockReturnValue(of(true));
+      const spySnackBarOpen = jest.spyOn(matSnackBar, 'open');
+      const spyLogOut = jest.spyOn(sessionService, 'logOut');
+      const spyNavigate = jest.spyOn(router, 'navigate');
+
+      // ACT
+      fixture.detectChanges(); // ngOnInit to set the user;
+      const btnDeleteEl: HTMLButtonElement =
+        fixture.nativeElement.querySelector('[data-test="delete-btn"]');
+      btnDeleteEl.click();
+
+      tick(3000);
+
+      // ASSERT
+      expect(spyDelete).toHaveBeenCalledWith(
+        mockSessionService.sessionInformation.id.toString()
+      );
+      expect(spySnackBarOpen).toHaveBeenCalledWith(
+        'Your account has been deleted !',
+        'Close',
+        { duration: 3000 }
+      );
+      expect(spyLogOut).toHaveBeenCalled();
+      expect(spyNavigate).toHaveBeenCalledWith(['/']);
+    }));
   });
 });
