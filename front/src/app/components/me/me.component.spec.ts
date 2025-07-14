@@ -209,5 +209,19 @@ describe('MeComponent', () => {
       expect(createDateEl.textContent).toBe(`Create at:  ${createdAt}`);
       expect(updateDateEl.textContent).toBe(`Last update:  ${updatedAt}`);
     });
+
+    it('should call window.history.back when the arrow button is clicked()', () => {
+      // ARRANGE
+      const spyWindowBack = jest.spyOn(window.history, 'back');
+
+      // ACT
+      const btnBack: HTMLButtonElement = fixture.nativeElement.querySelector(
+        '[data-test="back-btn"]'
+      );
+      btnBack.click();
+
+      // ASSERT
+      expect(spyWindowBack).toHaveBeenCalled();
+    });
   });
 });
