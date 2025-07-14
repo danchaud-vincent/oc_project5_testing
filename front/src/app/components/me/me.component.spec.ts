@@ -53,7 +53,7 @@ describe('MeComponent', () => {
 
   const mockUserService = {
     getById: jest.fn(),
-    delete: jest.fn().mockReturnValue(of(true)),
+    delete: jest.fn(),
   };
 
   const mockRouter = {
@@ -110,7 +110,7 @@ describe('MeComponent', () => {
       expect(component.user).toEqual(mockUser);
     });
 
-    it('should call window.history.back when back() is called', () => {
+    it('should navigate back in history when back() is called', () => {
       // ARRANGE
       const spyWindowBack = jest.spyOn(window.history, 'back');
 
@@ -119,6 +119,26 @@ describe('MeComponent', () => {
 
       // ASSERT
       expect(spyWindowBack).toHaveBeenCalled();
+    });
+
+    it('should delete the current user and perform logout + navigation', () => {
+      // ARRANGE
+      const userId: string =
+        mockSessionService.sessionInformation.id.toString();
+      mockUserService.delete.mockReturnValue(of(true));
+
+      // ACT
+      component.delete();
+
+      // ASSERT
+      expect(mockUserService.delete).toHaveBeenCalledWith(userId);
+      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
+        'Your account has been deleted !',
+        'Close',
+        { duration: 3000 }
+      );
+      expect(mockSessionService.logOut).toHaveBeenCalled();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
   });
 });
