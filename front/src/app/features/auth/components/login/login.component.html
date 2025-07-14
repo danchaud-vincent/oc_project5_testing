@@ -6,10 +6,10 @@
         <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
             <mat-card-content fxLayout="column">
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="Email" formControlName="email">
+                    <input data-test="email" matInput placeholder="Email" formControlName="email">
                 </mat-form-field>
                 <mat-form-field fxFlex>
-                    <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password"
+                    <input data-test="password" matInput [type]="hide ? 'password' : 'text'" placeholder="Password"
                         formControlName="password">
                     <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                         [attr.aria-pressed]="hide">
@@ -17,8 +17,8 @@
                     </button>
                 </mat-form-field>
             </mat-card-content>
-            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
-            <p *ngIf="onError" class="error">An error occurred</p>
+            <button data-test="submit-btn" mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
+            <p data-test="error" *ngIf="onError" class="error">An error occurred</p>
         </form>
     </mat-card>
 </div>
