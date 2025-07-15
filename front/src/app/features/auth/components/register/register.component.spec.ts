@@ -11,7 +11,7 @@ import { expect } from '@jest/globals';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -189,6 +189,19 @@ describe('RegisterComponent', () => {
         mockRegisterRequest
       );
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
+    });
+
+    it('should return an error when authService.register has an error', () => {
+      // ARRANGE
+      mockAuthService.register.mockReturnValue(
+        throwError(() => new Error('Register failed'))
+      );
+
+      // ACT
+      component.submit();
+
+      // ASSERT
+      expect(component.onError).toBe(true);
     });
   });
 });
