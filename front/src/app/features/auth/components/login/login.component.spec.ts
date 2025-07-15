@@ -21,6 +21,23 @@ import { of, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { getByDataTest } from 'src/test-utils/test-utils';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+
+function getCommonImports(): any[] {
+  return [
+    RouterTestingModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+  ];
+}
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -28,6 +45,7 @@ describe('LoginComponent', () => {
   let router: Router;
   let authService: AuthService;
   let sessionService: SessionService;
+  let httpMock: HttpTestingController;
 
   const mockLoginRequest = {
     email: 'test@test.com',
@@ -67,16 +85,7 @@ describe('LoginComponent', () => {
           { provide: AuthService, useValue: mockAuthService },
           { provide: Router, useValue: mockRouter },
         ],
-        imports: [
-          RouterTestingModule,
-          BrowserAnimationsModule,
-          HttpClientModule,
-          MatCardModule,
-          MatIconModule,
-          MatFormFieldModule,
-          MatInputModule,
-          ReactiveFormsModule,
-        ],
+        imports: [...getCommonImports()],
       }).compileComponents();
       fixture = TestBed.createComponent(LoginComponent);
       component = fixture.componentInstance;
@@ -178,22 +187,14 @@ describe('LoginComponent', () => {
       await TestBed.configureTestingModule({
         declarations: [LoginComponent],
         providers: [SessionService, AuthService],
-        imports: [
-          RouterTestingModule,
-          BrowserAnimationsModule,
-          HttpClientModule,
-          MatCardModule,
-          MatIconModule,
-          MatFormFieldModule,
-          MatInputModule,
-          ReactiveFormsModule,
-        ],
+        imports: [...getCommonImports(), HttpClientTestingModule],
       }).compileComponents();
 
       // inject service
       authService = TestBed.inject(AuthService);
       sessionService = TestBed.inject(SessionService);
       router = TestBed.inject(Router);
+      httpMock = TestBed.inject(HttpTestingController);
 
       sessionService.sessionInformation = mockSessionService.sessionInformation;
 
@@ -204,13 +205,11 @@ describe('LoginComponent', () => {
 
     it('should login with valid login request', fakeAsync(() => {
       // ARRANGE
-      const spyAuthLogin = jest
-        .spyOn(authService, 'login')
-        .mockReturnValue(of(mockSessionService.sessionInformation));
       const spySessionLogin = jest.spyOn(sessionService, 'logIn');
       const spyNavigate = jest
         .spyOn(router, 'navigate')
         .mockReturnValue(Promise.resolve(true));
+
       const emailInputEl = getByDataTest(fixture, 'email') as HTMLInputElement;
       const passwordInputEl = getByDataTest(
         fixture,
@@ -222,7 +221,7 @@ describe('LoginComponent', () => {
       ) as HTMLButtonElement;
       const errorEl = getByDataTest(fixture, 'error');
 
-      // ACT
+      // ACT filling form
       emailInputEl.value = mockLoginRequest.email;
       emailInputEl.dispatchEvent(new Event('input'));
       passwordInputEl.value = mockLoginRequest.password;
@@ -233,13 +232,22 @@ describe('LoginComponent', () => {
       // ASSERT SUBMIT
       expect(submitBtnEl.disabled).toBeFalsy(); // valid form so submit enabled
 
-      // ACT
+      // ACT submit form
       submitBtnEl.click();
       fixture.detectChanges();
       tick();
 
+      // ASSERT HTTP REQUEST
+      const reqAuth = httpMock.expectOne('api/auth/login');
+      expect(reqAuth.request.method).toBe('POST');
+      expect(reqAuth.request.body).toEqual(mockLoginRequest);
+
+      // mock http response
+      reqAuth.flush(mockSessionService.sessionInformation);
+      fixture.detectChanges();
+      tick();
+
       // ASSERT
-      expect(spyAuthLogin).toHaveBeenCalledWith(mockLoginRequest);
       expect(spySessionLogin).toHaveBeenCalledWith(
         mockSessionService.sessionInformation
       );
