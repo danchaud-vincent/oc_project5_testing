@@ -328,5 +328,49 @@ describe('RegisterComponent', () => {
       // ASSERT LOCATION
       expect(location.path()).toBe('/login');
     }));
+
+    it('shoudl throw and display an error when register failed', fakeAsync(() => {
+      // ARRANGE
+      jest
+        .spyOn(authService, 'register')
+        .mockReturnValue(throwError(() => new Error('Register failed')));
+
+      // get submit btn
+      const { submitBtnEl } = getHtmlElements();
+
+      // ACT filling form
+      fillingForm(
+        mockRegisterRequest.firstName,
+        mockRegisterRequest.lastName,
+        mockRegisterRequest.email,
+        mockRegisterRequest.password
+      );
+
+      // ACT submit form
+      submitBtnEl.click();
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT
+      const { errorEl } = getHtmlElements();
+      expect(errorEl).not.toBeNull();
+      expect(errorEl.textContent).toBe('An error occurred');
+    }));
+
+    it('should disable submit button when form fields are empty or invalid', fakeAsync(() => {
+      // ARRANGE
+      const { submitBtnEl } = getHtmlElements();
+
+      // ACT - password length empty or lower than 3
+      fillingForm(
+        mockRegisterRequest.firstName,
+        mockRegisterRequest.lastName,
+        mockRegisterRequest.email,
+        ''
+      );
+
+      // ASSERT
+      expect(submitBtnEl.disabled).toBeTruthy();
+    }));
   });
 });
