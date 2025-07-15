@@ -203,6 +203,25 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
     });
 
+    function getHtmlElements() {
+      return {
+        emailInputEl: getByDataTest(fixture, 'email') as HTMLInputElement,
+        passwordInputEl: getByDataTest(fixture, 'password') as HTMLInputElement,
+        submitBtnEl: getByDataTest(fixture, 'submit-btn') as HTMLButtonElement,
+        errorEl: getByDataTest(fixture, 'error'),
+      };
+    }
+
+    function fillingForm(email: string, password: string): void {
+      const { emailInputEl, passwordInputEl } = getHtmlElements();
+      emailInputEl.value = email;
+      emailInputEl.dispatchEvent(new Event('input'));
+      passwordInputEl.value = password;
+      passwordInputEl.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      tick();
+    }
+
     it('should login with valid login request', fakeAsync(() => {
       // ARRANGE
       const spySessionLogin = jest.spyOn(sessionService, 'logIn');
@@ -210,24 +229,11 @@ describe('LoginComponent', () => {
         .spyOn(router, 'navigate')
         .mockReturnValue(Promise.resolve(true));
 
-      const emailInputEl = getByDataTest(fixture, 'email') as HTMLInputElement;
-      const passwordInputEl = getByDataTest(
-        fixture,
-        'password'
-      ) as HTMLInputElement;
-      const submitBtnEl = getByDataTest(
-        fixture,
-        'submit-btn'
-      ) as HTMLButtonElement;
-      const errorEl = getByDataTest(fixture, 'error');
+      // get HTML ELEM
+      const { submitBtnEl } = getHtmlElements();
 
       // ACT filling form
-      emailInputEl.value = mockLoginRequest.email;
-      emailInputEl.dispatchEvent(new Event('input'));
-      passwordInputEl.value = mockLoginRequest.password;
-      passwordInputEl.dispatchEvent(new Event('input'));
-      fixture.detectChanges();
-      tick();
+      fillingForm(mockLoginRequest.email, mockLoginRequest.password);
 
       // ASSERT SUBMIT
       expect(submitBtnEl.disabled).toBeFalsy(); // valid form so submit enabled
@@ -236,6 +242,9 @@ describe('LoginComponent', () => {
       submitBtnEl.click();
       fixture.detectChanges();
       tick();
+
+      // ASSERT THE BUTTON IS ENABLED
+      expect(submitBtnEl.disabled).toBeFalsy();
 
       // ASSERT HTTP REQUEST
       const reqAuth = httpMock.expectOne('api/auth/login');
@@ -247,6 +256,7 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
       tick();
 
+      const { errorEl } = getHtmlElements();
       // ASSERT
       expect(spySessionLogin).toHaveBeenCalledWith(
         mockSessionService.sessionInformation
@@ -254,6 +264,44 @@ describe('LoginComponent', () => {
       expect(spyNavigate).toHaveBeenCalledWith(['/sessions']);
       expect(component.onError).toBeFalsy();
       expect(errorEl).toBeNull();
+    }));
+
+    it('should throw and display an error when login failed', fakeAsync(() => {
+      // ARRANGE
+      jest
+        .spyOn(authService, 'login')
+        .mockReturnValue(throwError(() => new Error('Login failed')));
+
+      // get HTML ELEM
+      const { submitBtnEl } = getHtmlElements();
+
+      // ACT filling form
+      fillingForm(mockLoginRequest.email, mockLoginRequest.password);
+
+      // ASSERT THE BUTTON IS ENABLED
+      expect(submitBtnEl.disabled).toBeFalsy();
+
+      // ACT submit form
+      submitBtnEl.click();
+      fixture.detectChanges();
+      tick();
+
+      const { errorEl } = getHtmlElements();
+
+      // ASSERT
+      expect(errorEl).not.toBeNull();
+      expect(errorEl.textContent).toBe('An error occurred');
+    }));
+
+    it('should disable submit button when form fields are invalid', fakeAsync(() => {
+      // ARRANGE
+      const { submitBtnEl } = getHtmlElements();
+
+      // ACT
+      fillingForm('', '');
+
+      // ASSERT
+      expect(submitBtnEl.disabled).toBeTruthy();
     }));
   });
 });
