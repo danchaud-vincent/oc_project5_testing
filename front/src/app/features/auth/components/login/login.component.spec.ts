@@ -100,7 +100,7 @@ describe('LoginComponent', () => {
       expect(component.form.valid).toBeFalsy();
     });
 
-    it('should mark email field as invalid when email format is incorrect', () => {
+    it('should mark email field as invalid when email is empty', () => {
       // ARRANGE
       const email = component.form.controls['email'];
 
@@ -110,6 +110,11 @@ describe('LoginComponent', () => {
       // ASSERT
       expect(email.valid).toBeFalsy();
       expect(email.getError('required')).toBeTruthy();
+    });
+
+    it('should mark email field as invalid when email format is invalid', () => {
+      // ARRANGE
+      const email = component.form.controls['email'];
 
       // ACT
       email.setValue('test'); // set a wrong email without @
@@ -118,7 +123,7 @@ describe('LoginComponent', () => {
       expect(email.valid).toBeFalsy();
     });
 
-    it('should mark password field as invalid when password format is incorrect', () => {
+    it('should mark password field as invalid when password is empty', () => {
       // ARRANGE
       const password = component.form.controls['password'];
 
@@ -128,6 +133,11 @@ describe('LoginComponent', () => {
       // ASSERT
       expect(password.valid).toBeFalsy();
       expect(password.getError('required')).toBeTruthy();
+    });
+
+    it('should mark password field as invalid when password format is incorrect', () => {
+      // ARRANGE
+      const password = component.form.controls['password'];
 
       // ACT
       password.setValue('ab'); // length < 3
