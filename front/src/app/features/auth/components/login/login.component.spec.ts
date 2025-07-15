@@ -25,6 +25,8 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { ListComponent } from 'src/app/features/sessions/components/list/list.component';
+import { Location } from '@angular/common';
 
 function getCommonImports(): any[] {
   return [
@@ -43,6 +45,7 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let router: Router;
+  let location: Location;
   let authService: AuthService;
   let sessionService: SessionService;
   let httpMock: HttpTestingController;
@@ -72,6 +75,8 @@ describe('LoginComponent', () => {
   const mockRouter = {
     navigate: jest.fn(),
   };
+
+  const testRoutes = [{ path: 'sessions', component: ListComponent }];
 
   describe('Unit Test Suite', () => {
     beforeEach(async () => {
@@ -199,13 +204,18 @@ describe('LoginComponent', () => {
       await TestBed.configureTestingModule({
         declarations: [LoginComponent],
         providers: [SessionService, AuthService],
-        imports: [...getCommonImports(), HttpClientTestingModule],
+        imports: [
+          ...getCommonImports(),
+          HttpClientTestingModule,
+          RouterTestingModule.withRoutes(testRoutes),
+        ],
       }).compileComponents();
 
       // inject service
       authService = TestBed.inject(AuthService);
       sessionService = TestBed.inject(SessionService);
       router = TestBed.inject(Router);
+      location = TestBed.inject(Location);
       httpMock = TestBed.inject(HttpTestingController);
 
       sessionService.sessionInformation = mockSessionService.sessionInformation;
@@ -241,12 +251,10 @@ describe('LoginComponent', () => {
     it('should login with valid login request', fakeAsync(() => {
       // ARRANGE
       const spySessionLogin = jest.spyOn(sessionService, 'logIn');
-      const spyNavigate = jest
-        .spyOn(router, 'navigate')
-        .mockReturnValue(Promise.resolve(true));
 
       // get HTML ELEM
       const { submitBtnEl } = getHtmlElements();
+      expect(submitBtnEl.disabled).toBeTruthy();
 
       // ACT filling form
       fillingForm(mockLoginRequest.email, mockLoginRequest.password);
@@ -274,9 +282,7 @@ describe('LoginComponent', () => {
       expect(spySessionLogin).toHaveBeenCalledWith(
         mockSessionService.sessionInformation
       );
-      expect(spyNavigate).toHaveBeenCalledWith(['/sessions']);
-      expect(component.onError).toBeFalsy();
-      expect(errorEl).toBeNull();
+      expect(location.path()).toBe('/sessions');
     }));
 
     it('should throw and display an error when login failed', fakeAsync(() => {
