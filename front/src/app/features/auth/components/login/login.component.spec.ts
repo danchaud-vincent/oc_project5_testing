@@ -203,6 +203,10 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
     });
 
+    afterEach(() => {
+      httpMock.verify();
+    });
+
     function getHtmlElements() {
       return {
         emailInputEl: getByDataTest(fixture, 'email') as HTMLInputElement,
