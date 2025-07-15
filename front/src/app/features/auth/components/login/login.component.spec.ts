@@ -169,9 +169,11 @@ describe('LoginComponent', () => {
       );
 
       // ACT
+      component.form.setValue(mockLoginRequest);
       component.submit();
 
       // ASSERT
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockLoginRequest);
       expect(mockSessionService.logIn).toHaveBeenCalledWith(
         mockSessionService.sessionInformation
       );
