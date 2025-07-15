@@ -1,5 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,12 +15,37 @@ import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+import { LoginComponent } from '../login/login.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Location } from '@angular/common';
+import { By } from '@angular/platform-browser';
+import { getByDataTest } from 'src/test-utils/test-utils';
+
+function getCommonImports(): any[] {
+  return [
+    BrowserAnimationsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+  ];
+}
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  let authService: AuthService;
+  let router: Router;
+  let location: Location;
+  let httpMock: HttpTestingController;
 
   const mockAuthService = {
     register: jest.fn(),
@@ -32,30 +62,24 @@ describe('RegisterComponent', () => {
     password: 'test1234',
   };
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [RegisterComponent],
-      providers: [
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: mockRouter },
-      ],
-      imports: [
-        BrowserAnimationsModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(RegisterComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  const testRoutes = [{ path: 'login', component: LoginComponent }];
 
   describe('Unit Test Suite', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [RegisterComponent],
+        providers: [
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: Router, useValue: mockRouter },
+        ],
+        imports: [...getCommonImports()],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(RegisterComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
     it('should create', () => {
       expect(component).toBeTruthy();
     });
@@ -203,5 +227,106 @@ describe('RegisterComponent', () => {
       // ASSERT
       expect(component.onError).toBe(true);
     });
+  });
+
+  describe('Integration Test Suite', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [RegisterComponent],
+        providers: [AuthService],
+        imports: [
+          ...getCommonImports(),
+          HttpClientTestingModule,
+          RouterTestingModule.withRoutes(testRoutes),
+        ],
+      }).compileComponents();
+
+      // inject
+      authService = TestBed.inject(AuthService);
+      router = TestBed.inject(Router);
+      location = TestBed.inject(Location);
+      httpMock = TestBed.inject(HttpTestingController);
+
+      fixture = TestBed.createComponent(RegisterComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    afterEach(() => {
+      httpMock.verify();
+    });
+
+    function getHtmlElements() {
+      return {
+        firstNameInputEl: getByDataTest(
+          fixture,
+          'firstName'
+        ) as HTMLInputElement,
+        lastNameInputEl: getByDataTest(fixture, 'lastName') as HTMLInputElement,
+        emailInputEl: getByDataTest(fixture, 'email') as HTMLInputElement,
+        passwordInputEl: getByDataTest(fixture, 'password') as HTMLInputElement,
+        submitBtnEl: getByDataTest(fixture, 'submit-btn') as HTMLButtonElement,
+        errorEl: getByDataTest(fixture, 'error'),
+      };
+    }
+
+    function fillingForm(
+      firstName: string,
+      lastName: string,
+      email: string,
+      password: string
+    ) {
+      const {
+        firstNameInputEl,
+        lastNameInputEl,
+        emailInputEl,
+        passwordInputEl,
+      } = getHtmlElements();
+      firstNameInputEl.value = firstName;
+      firstNameInputEl.dispatchEvent(new Event('input'));
+      lastNameInputEl.value = lastName;
+      lastNameInputEl.dispatchEvent(new Event('input'));
+      emailInputEl.value = email;
+      emailInputEl.dispatchEvent(new Event('input'));
+      passwordInputEl.value = password;
+      passwordInputEl.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      tick();
+    }
+
+    it('should register with valid form request', fakeAsync(() => {
+      // ARRANGE
+      const { submitBtnEl } = getHtmlElements();
+      expect(submitBtnEl.disabled).toBeTruthy();
+
+      // ACT filling register form
+      fillingForm(
+        mockRegisterRequest.firstName,
+        mockRegisterRequest.lastName,
+        mockRegisterRequest.email,
+        mockRegisterRequest.password
+      );
+
+      // ASSERT
+      expect(submitBtnEl.disabled).toBeFalsy();
+
+      // ACT submit
+      submitBtnEl.click();
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT HTTP REQUEST
+      const reqAuth = httpMock.expectOne('api/auth/register');
+      expect(reqAuth.request.method).toBe('POST');
+      expect(reqAuth.request.body).toEqual(mockRegisterRequest);
+
+      // mock http response
+      reqAuth.flush(of(null));
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT LOCATION
+      expect(location.path()).toBe('/login');
+    }));
   });
 });
