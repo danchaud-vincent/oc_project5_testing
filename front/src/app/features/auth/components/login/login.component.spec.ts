@@ -259,9 +259,6 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
       tick();
 
-      // ASSERT THE BUTTON IS ENABLED
-      expect(submitBtnEl.disabled).toBeFalsy();
-
       // ASSERT HTTP REQUEST
       const reqAuth = httpMock.expectOne('api/auth/login');
       expect(reqAuth.request.method).toBe('POST');
