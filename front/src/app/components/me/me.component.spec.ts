@@ -263,7 +263,9 @@ describe('MeComponent', () => {
       fixture.detectChanges();
 
       // ASSERT HTTP REQUEST
-      const reqGetByIt = httpMock.expectOne('api/user/2');
+      const reqGetByIt = httpMock.expectOne(
+        `api/user/${mockSessionServiceUser.sessionInformation.id}`
+      );
       expect(reqGetByIt.request.method).toBe('GET');
       reqGetByIt.flush(mockUser); // return a mockUser
 
@@ -282,7 +284,9 @@ describe('MeComponent', () => {
       btnDeleteEl.click();
 
       // ASSERT HTTP REQUEST
-      const reqDelete = httpMock.expectOne('api/user/2');
+      const reqDelete = httpMock.expectOne(
+        `api/user/${mockSessionServiceUser.sessionInformation.id}`
+      );
       expect(reqDelete.request.method).toBe('DELETE');
       reqDelete.flush(null);
 
