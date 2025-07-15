@@ -147,7 +147,7 @@ describe('LoginComponent', () => {
       expect(password.getError('minlength')).toBeTruthy();
     });
 
-    it('should mark email and password fiels valid with valid format credentials', () => {
+    it('should mark email and password fields valid with valid format credentials', () => {
       // ARRANGE
       const email = component.form.controls['email'];
       const password = component.form.controls['password'];
