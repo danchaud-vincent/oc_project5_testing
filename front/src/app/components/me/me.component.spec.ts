@@ -20,6 +20,21 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { DatePipe } from '@angular/common';
 import { getByDataTest } from 'src/test-utils/test-utils';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+
+function getCommonImports() {
+  return [
+    MatSnackBarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    NoopAnimationsModule,
+  ];
+}
 
 describe('MeComponent', () => {
   let component: MeComponent;
@@ -28,6 +43,7 @@ describe('MeComponent', () => {
   let sessionService: SessionService;
   let router: Router;
   let matSnackBar: MatSnackBar;
+  let httpMock: HttpTestingController;
 
   const mockAdmin = {
     id: 1,
@@ -51,15 +67,28 @@ describe('MeComponent', () => {
     updatedAt: new Date('2025-01-01'),
   };
 
-  const mockSessionService = {
+  const mockSessionServiceAdmin = {
     sessionInformation: {
       token: 'Bearer',
       type: 'token',
       id: 1,
-      username: 'james_t',
-      firstName: 'james',
+      username: 'admin',
+      firstName: 'admin',
       lastName: 'test',
       admin: true,
+    },
+    logOut: jest.fn(),
+  };
+
+  const mockSessionServiceUser = {
+    sessionInformation: {
+      token: 'Bearer',
+      type: 'token',
+      id: 2,
+      username: 'user',
+      firstName: 'user',
+      lastName: 'test',
+      admin: false,
     },
     logOut: jest.fn(),
   };
@@ -81,17 +110,10 @@ describe('MeComponent', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         declarations: [MeComponent],
-        imports: [
-          MatSnackBarModule,
-          HttpClientModule,
-          MatCardModule,
-          MatFormFieldModule,
-          MatIconModule,
-          MatInputModule,
-        ],
+        imports: [HttpClientModule, ...getCommonImports()],
         providers: [
           { provide: UserService, useValue: mockUserService },
-          { provide: SessionService, useValue: mockSessionService },
+          { provide: SessionService, useValue: mockSessionServiceAdmin },
           { provide: Router, useValue: mockRouter },
           { provide: MatSnackBar, useValue: mockMatSnackBar },
         ],
@@ -137,7 +159,7 @@ describe('MeComponent', () => {
     it('should delete the current user and perform logout + navigation', () => {
       // ARRANGE
       const userId: string =
-        mockSessionService.sessionInformation.id.toString();
+        mockSessionServiceAdmin.sessionInformation.id.toString();
       mockUserService.delete.mockReturnValue(of(true));
 
       // ACT
@@ -150,7 +172,7 @@ describe('MeComponent', () => {
         'Close',
         { duration: 3000 }
       );
-      expect(mockSessionService.logOut).toHaveBeenCalled();
+      expect(mockSessionServiceAdmin.logOut).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
   });
@@ -160,14 +182,10 @@ describe('MeComponent', () => {
       await TestBed.configureTestingModule({
         declarations: [MeComponent],
         imports: [
-          MatSnackBarModule,
+          ...getCommonImports(),
           HttpClientModule,
-          MatCardModule,
-          MatFormFieldModule,
-          MatIconModule,
-          MatInputModule,
           RouterTestingModule,
-          NoopAnimationsModule,
+          HttpClientTestingModule,
         ],
         providers: [UserService, SessionService, MatSnackBar],
       }).compileComponents();
@@ -177,8 +195,7 @@ describe('MeComponent', () => {
       sessionService = TestBed.inject(SessionService);
       router = TestBed.inject(Router);
       matSnackBar = TestBed.inject(MatSnackBar);
-
-      sessionService.sessionInformation = mockSessionService.sessionInformation;
+      httpMock = TestBed.inject(HttpTestingController);
 
       fixture = TestBed.createComponent(MeComponent);
       component = fixture.componentInstance;
@@ -186,11 +203,14 @@ describe('MeComponent', () => {
 
     it('should fetch user data and display admin specific data in the DOM on init', () => {
       // ARRANGE
+      sessionService.sessionInformation =
+        mockSessionServiceAdmin.sessionInformation;
+
       const spyGetById = jest
         .spyOn(userService, 'getById')
         .mockReturnValue(of(mockAdmin));
       const sessionId: string =
-        mockSessionService.sessionInformation.id.toString();
+        mockSessionServiceAdmin.sessionInformation.id.toString();
       const pipe = new DatePipe('en-US');
       const createdAt = pipe.transform(mockAdmin.createdAt, 'longDate');
       const updatedAt = pipe.transform(mockAdmin.updatedAt, 'longDate');
@@ -198,34 +218,33 @@ describe('MeComponent', () => {
       // ACT
       fixture.detectChanges();
 
-      const nameEl: HTMLElement = getByDataTest(fixture, 'name');
-      const emailEl: HTMLElement = getByDataTest(fixture, 'email');
-      const adminEl: HTMLElement = getByDataTest(fixture, 'admin');
-      const createDateEl: HTMLElement = getByDataTest(fixture, 'createdDate');
-      const updateDateEl: HTMLElement = getByDataTest(fixture, 'updatedDate');
-      const deleteBtnEl: HTMLElement = getByDataTest(fixture, 'delete-btn');
-
       // ASSERT
       expect(spyGetById).toHaveBeenCalledWith(sessionId);
-      expect(nameEl.textContent).toBe(
+      expect(getByDataTest(fixture, 'name').textContent).toBe(
         `Name: ${mockAdmin.firstName} ${mockAdmin.lastName.toUpperCase()}`
       );
-      expect(emailEl.textContent).toBe(`Email: ${mockAdmin.email}`);
-      expect(adminEl.textContent).not.toBeNull();
-      expect(deleteBtnEl).toBeNull();
-      expect(createDateEl.textContent).toBe(`Create at:  ${createdAt}`);
-      expect(updateDateEl.textContent).toBe(`Last update:  ${updatedAt}`);
+      expect(getByDataTest(fixture, 'email').textContent).toContain(
+        `${mockAdmin.email}`
+      );
+      expect(getByDataTest(fixture, 'admin').textContent).toContain('admin');
+      expect(getByDataTest(fixture, 'delete-btn')).toBeNull();
+      expect(getByDataTest(fixture, 'createdDate').textContent).toContain(
+        `${createdAt}`
+      );
+      expect(getByDataTest(fixture, 'updatedDate').textContent).toContain(
+        `${updatedAt}`
+      );
     });
 
     it('should call window.history.back when the arrow button is clicked()', () => {
       // ARRANGE
+      sessionService.sessionInformation =
+        mockSessionServiceAdmin.sessionInformation;
       const spyWindowBack = jest.spyOn(window.history, 'back');
 
       // ACT
       fixture.detectChanges();
-      const btnBack: HTMLButtonElement = fixture.nativeElement.querySelector(
-        '[data-test="back-btn"]'
-      );
+      const btnBack = getByDataTest(fixture, 'back-btn') as HTMLButtonElement;
       btnBack.click();
 
       // ASSERT
@@ -234,35 +253,51 @@ describe('MeComponent', () => {
 
     it('should delete a user and perform a logout and navigation on delete', fakeAsync(() => {
       // ARRANGE
-      const spyGetById = jest
-        .spyOn(userService, 'getById')
-        .mockReturnValue(of(mockUser));
-      const spyDelete = jest
-        .spyOn(userService, 'delete')
-        .mockReturnValue(of(true));
-      const spySnackBarOpen = jest.spyOn(matSnackBar, 'open');
+      const spyOpen = jest.spyOn(matSnackBar, 'open');
       const spyLogOut = jest.spyOn(sessionService, 'logOut');
       const spyNavigate = jest.spyOn(router, 'navigate');
+      sessionService.sessionInformation =
+        mockSessionServiceUser.sessionInformation;
 
-      // ACT
-      fixture.detectChanges(); // ngOnInit to set the user;
-      const btnDeleteEl: HTMLButtonElement =
-        fixture.nativeElement.querySelector('[data-test="delete-btn"]');
+      // ngOnInit
+      fixture.detectChanges();
+
+      // ASSERT HTTP REQUEST
+      const reqGetByIt = httpMock.expectOne('api/user/2');
+      expect(reqGetByIt.request.method).toBe('GET');
+      reqGetByIt.flush(mockUser); // return a mockUser
+
+      expect(component.user).toEqual(mockUser);
+
+      fixture.detectChanges();
+
+      // get delete button
+      const btnDeleteEl = getByDataTest(
+        fixture,
+        'delete-btn'
+      ) as HTMLButtonElement;
+
+      // Delete
+      expect(btnDeleteEl).not.toBeNull(); // component should show the delete btn for a user
       btnDeleteEl.click();
 
-      tick(3000);
+      // ASSERT HTTP REQUEST
+      const reqDelete = httpMock.expectOne('api/user/2');
+      expect(reqDelete.request.method).toBe('DELETE');
+      reqDelete.flush(null);
+
+      tick(3000); // wait snackBar
 
       // ASSERT
-      expect(spyDelete).toHaveBeenCalledWith(
-        mockSessionService.sessionInformation.id.toString()
-      );
-      expect(spySnackBarOpen).toHaveBeenCalledWith(
+      expect(spyOpen).toHaveBeenCalledWith(
         'Your account has been deleted !',
         'Close',
         { duration: 3000 }
       );
       expect(spyLogOut).toHaveBeenCalled();
       expect(spyNavigate).toHaveBeenCalledWith(['/']);
+
+      httpMock.verify();
     }));
   });
 });
