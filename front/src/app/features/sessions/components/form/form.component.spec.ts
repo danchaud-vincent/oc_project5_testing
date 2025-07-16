@@ -197,13 +197,27 @@ describe('FormComponent', () => {
 
         expect(component.sessionForm!.value).toEqual({
           name: mockSession.name,
-          date: new Date(mockSession.date).toISOString().substring(0, 10),
+          date: new Date(mockSession.date).toISOString().split('T')[0],
           teacher_id: mockSession.teacher_id,
           description: mockSession.description,
         });
       });
 
-      it('should fill the form with empty value when creating a new session', () => {});
+      it('should fill the form with empty values when creating a new session', () => {
+        // ARRANGE
+        jest.spyOn(router, 'url', 'get').mockReturnValue('sessions/create');
+
+        // ACT : onInit
+        fixture.detectChanges();
+
+        // ASSERT
+        expect(component.sessionForm?.value).toEqual({
+          date: '',
+          description: '',
+          name: '',
+          teacher_id: '',
+        });
+      });
     });
   });
 });
