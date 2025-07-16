@@ -113,7 +113,7 @@ describe('MeComponent', () => {
         imports: [HttpClientModule, ...getCommonImports()],
         providers: [
           { provide: UserService, useValue: mockUserService },
-          { provide: SessionService, useValue: mockSessionServiceAdmin },
+          { provide: SessionService, useValue: mockSessionServiceUser },
           { provide: Router, useValue: mockRouter },
           { provide: MatSnackBar, useValue: mockMatSnackBar },
         ],
@@ -125,7 +125,7 @@ describe('MeComponent', () => {
 
     it('should create', () => {
       // ARRANGE
-      mockUserService.getById.mockReturnValue(of(mockAdmin));
+      mockUserService.getById.mockReturnValue(of(mockUser));
 
       // ACT
       fixture.detectChanges();
@@ -159,7 +159,7 @@ describe('MeComponent', () => {
     it('should delete the current user and perform logout + navigation', () => {
       // ARRANGE
       const userId: string =
-        mockSessionServiceAdmin.sessionInformation.id.toString();
+        mockSessionServiceUser.sessionInformation.id.toString();
       mockUserService.delete.mockReturnValue(of(true));
 
       // ACT
@@ -172,7 +172,7 @@ describe('MeComponent', () => {
         'Close',
         { duration: 3000 }
       );
-      expect(mockSessionServiceAdmin.logOut).toHaveBeenCalled();
+      expect(mockSessionServiceUser.logOut).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
   });
@@ -201,7 +201,7 @@ describe('MeComponent', () => {
       component = fixture.componentInstance;
     });
 
-    it('should fetch user data and display admin specific data in the DOM on init', () => {
+    it('should fetch ADMIN data and display ADMIN specific data in the DOM on init', () => {
       // ARRANGE
       sessionService.sessionInformation =
         mockSessionServiceAdmin.sessionInformation;
@@ -251,7 +251,7 @@ describe('MeComponent', () => {
       expect(spyWindowBack).toHaveBeenCalled();
     });
 
-    it('should delete a user and perform a logout and navigation on delete', fakeAsync(() => {
+    it('should delete by available when we are a USER and perform a logout and navigation on delete', fakeAsync(() => {
       // ARRANGE
       const spyOpen = jest.spyOn(matSnackBar, 'open');
       const spyLogOut = jest.spyOn(sessionService, 'logOut');
