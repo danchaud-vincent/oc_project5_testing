@@ -1,5 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,10 +23,19 @@ import { Teacher } from 'src/app/interfaces/teacher.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { of } from 'rxjs';
+import { Location } from '@angular/common';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+import { getByDataTest } from 'src/test-utils/test-utils';
+import { ListComponent } from '../list/list.component';
 
 function getCommonImports() {
   return [
-    RouterTestingModule,
+    RouterTestingModule.withRoutes([
+      { path: 'sessions', component: ListComponent },
+    ]),
     HttpClientModule,
     MatCardModule,
     MatIconModule,
@@ -38,47 +52,70 @@ describe('FormComponent', () => {
   let component: FormComponent;
   let fixture: ComponentFixture<FormComponent>;
   let router: Router;
+  let location: Location;
+  let httpMock: HttpTestingController;
+  let sessionService: SessionService;
+  let tearcherService: TeacherService;
+  let sessionApiService: SessionApiService;
+  let matSnackBar: MatSnackBar;
 
-  const mockSessionService = {
+  const mockSession = {
+    id: 1,
+    name: 'session1',
+    description: 'a session',
+    date: new Date('2025-12-01'),
+    teacher_id: 1,
+    users: [],
+    createdAt: new Date('2025-01-01'),
+    updatedAt: new Date('2025-01-01'),
+  };
+
+  const mockAdminSessionService = {
     sessionInformation: {
+      token: 'Bearer',
+      type: 'token',
+      id: 1,
+      username: 'admin',
+      firstName: 'admin',
+      lastName: 'admin',
       admin: true,
     },
   };
 
-  describe('Unit Test Suite', () => {
-    const mockSession = {
+  const mockTeachers: Teacher[] = [
+    {
       id: 1,
-      name: 'session1',
-      description: 'a session',
-      date: new Date('2025-12-01'),
-      teacher_id: 1,
-      users: [],
+      lastName: 'teacher1',
+      firstName: 'teacher1',
       createdAt: new Date('2025-01-01'),
       updatedAt: new Date('2025-01-01'),
-    };
+    },
+    {
+      id: 2,
+      lastName: 'teacher2',
+      firstName: 'teacher2',
+      createdAt: new Date('2025-01-02'),
+      updatedAt: new Date('2025-01-02'),
+    },
+  ];
 
+  const sessionId: string =
+    mockAdminSessionService.sessionInformation.id.toString();
+
+  const mockActivatedRoute = {
+    snapshot: {
+      paramMap: {
+        get: jest.fn().mockReturnValue(sessionId),
+      },
+    },
+  };
+
+  describe('Unit Test Suite', () => {
     const mockSessionApiService = {
       detail: jest.fn().mockReturnValue(of(mockSession)),
       create: jest.fn(),
       update: jest.fn(),
     };
-
-    const mockTeachers: Teacher[] = [
-      {
-        id: 1,
-        lastName: 'teacher1',
-        firstName: 'teacher1',
-        createdAt: new Date('2025-01-01'),
-        updatedAt: new Date('2025-01-01'),
-      },
-      {
-        id: 2,
-        lastName: 'teacher2',
-        firstName: 'teacher2',
-        createdAt: new Date('2025-01-02'),
-        updatedAt: new Date('2025-01-02'),
-      },
-    ];
 
     const mockTeacherService = {
       all: jest.fn(),
@@ -137,29 +174,6 @@ describe('FormComponent', () => {
     });
 
     describe('Unit Test as ADMIN', () => {
-      const mockAdminSessionService = {
-        sessionInformation: {
-          token: 'Bearer',
-          type: 'token',
-          id: 1,
-          username: 'admin',
-          firstName: 'admin',
-          lastName: 'admin',
-          admin: true,
-        },
-      };
-
-      const sessionId: string =
-        mockAdminSessionService.sessionInformation.id.toString();
-
-      const mockActivatedRoute = {
-        snapshot: {
-          paramMap: {
-            get: jest.fn().mockReturnValue(sessionId),
-          },
-        },
-      };
-
       beforeEach(async () => {
         await TestBed.configureTestingModule({
           imports: [...getCommonImports()],
@@ -299,5 +313,110 @@ describe('FormComponent', () => {
         expect(component.sessionForm!.valid).toBeTruthy();
       });
     });
+  });
+
+  describe('Integration Test Suite', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        imports: [...getCommonImports(), HttpClientTestingModule],
+        providers: [
+          SessionService,
+          SessionApiService,
+          TeacherService,
+          MatSnackBar,
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        ],
+        declarations: [FormComponent],
+      }).compileComponents();
+
+      // inject
+      router = TestBed.inject(Router);
+      sessionService = TestBed.inject(SessionService);
+      sessionApiService = TestBed.inject(SessionApiService);
+      tearcherService = TestBed.inject(TeacherService);
+      location = TestBed.inject(Location);
+      httpMock = TestBed.inject(HttpTestingController);
+      matSnackBar = TestBed.inject(MatSnackBar);
+
+      fixture = TestBed.createComponent(FormComponent);
+      component = fixture.componentInstance;
+    });
+
+    afterEach(() => {
+      httpMock.verify();
+    });
+
+    it('should update a session and then exit the page when save button is clicked', fakeAsync(() => {
+      // ARRANGE
+      sessionService.sessionInformation =
+        mockAdminSessionService.sessionInformation;
+      jest.spyOn(router, 'url', 'get').mockReturnValue('sessions/update');
+      const spySnackBarOpen = jest.spyOn(matSnackBar, 'open');
+
+      // INIT
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT DETAIL HTTP REQUEST
+      const reqDetail = httpMock.expectOne(`api/session/${sessionId}`);
+      expect(reqDetail.request.method).toBe('GET');
+      reqDetail.flush(mockSession);
+
+      // WAIT FOR CHANGE IN THE DOM
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT TEACHERS HTTP REQUEST
+      const reqTeacherAll = httpMock.expectOne(`api/teacher`);
+      expect(reqTeacherAll.request.method).toBe('GET');
+      reqTeacherAll.flush(mockTeachers);
+
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT Form value
+      expect(component.sessionForm?.value).not.toBeNull();
+
+      // Modify the name value in the form
+      const nameInputEl = getByDataTest(fixture, 'name') as HTMLInputElement;
+      nameInputEl.value = 'New Name';
+      nameInputEl.dispatchEvent(new Event('input'));
+
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT THE NAME INPUT AS CHANGED
+      expect(nameInputEl.value).toBe('New Name');
+
+      // GET SUBMIT BTN
+      const saveBtnEl = getByDataTest(fixture, 'save-btn') as HTMLButtonElement;
+      expect(saveBtnEl.disabled).toBeFalsy();
+      saveBtnEl.click();
+
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT DETAIL HTTP REQUEST
+      const reqUpdate = httpMock.expectOne(`api/session/${sessionId}`);
+      expect(reqUpdate.request.method).toBe('PUT');
+      expect(reqUpdate.request.body).toEqual({
+        name: 'New Name',
+        date: mockSession.date.toISOString().split('T')[0],
+        description: mockSession.description,
+        teacher_id: mockSession.id,
+      });
+      reqUpdate.flush(mockSession);
+
+      // ASSERT EXIT PAGE
+      expect(spySnackBarOpen).toHaveBeenCalledWith(
+        'Session updated !',
+        'Close',
+        { duration: 3000 }
+      );
+      fixture.detectChanges();
+      tick(3000);
+
+      expect(location.path()).toBe('/sessions');
+    }));
   });
 });
