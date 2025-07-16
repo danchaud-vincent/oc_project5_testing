@@ -329,7 +329,7 @@ describe('RegisterComponent', () => {
       expect(location.path()).toBe('/login');
     }));
 
-    it('shoudl throw and display an error when register failed', fakeAsync(() => {
+    it('should throw and display an error in the DOM when register failed', fakeAsync(() => {
       // ARRANGE
       jest
         .spyOn(authService, 'register')

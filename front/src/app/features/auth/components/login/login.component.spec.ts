@@ -285,7 +285,7 @@ describe('LoginComponent', () => {
       expect(location.path()).toBe('/sessions');
     }));
 
-    it('should throw and display an error when login failed', fakeAsync(() => {
+    it('should throw and display an errorin the DOM when login failed', fakeAsync(() => {
       // ARRANGE
       jest
         .spyOn(authService, 'login')
