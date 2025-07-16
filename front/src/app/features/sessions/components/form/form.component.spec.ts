@@ -418,5 +418,91 @@ describe('FormComponent', () => {
 
       expect(location.path()).toBe('/sessions');
     }));
+
+    it('should create a new session and then exit the page when save button is clicked', fakeAsync(() => {
+      // ARRANGE
+      sessionService.sessionInformation =
+        mockAdminSessionService.sessionInformation;
+      jest.spyOn(router, 'url', 'get').mockReturnValue('sessions/create');
+      const spySnackBarOpen = jest.spyOn(matSnackBar, 'open');
+
+      // INIT
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT TEACHERS HTTP REQUEST
+      const reqTeacherAll = httpMock.expectOne(`api/teacher`);
+      expect(reqTeacherAll.request.method).toBe('GET');
+      reqTeacherAll.flush(mockTeachers);
+
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT Form value
+      expect(component.sessionForm?.value).toEqual({
+        date: '',
+        description: '',
+        name: '',
+        teacher_id: '',
+      });
+
+      // ASSERT BUTTON SAVE disable
+      const saveBtnEl = getByDataTest(fixture, 'save-btn') as HTMLButtonElement;
+      expect(saveBtnEl.disabled).toBeTruthy();
+
+      // FILLING THE FORM
+      const nameInputEl = getByDataTest(fixture, 'name') as HTMLInputElement;
+      const dateInputEl = getByDataTest(fixture, 'date') as HTMLInputElement;
+      const descTextEl = getByDataTest(
+        fixture,
+        'description'
+      ) as HTMLTextAreaElement;
+
+      nameInputEl.value = mockSession.name;
+      nameInputEl.dispatchEvent(new Event('input'));
+      dateInputEl.value = mockSession.date.toISOString().split('T')[0];
+      dateInputEl.dispatchEvent(new Event('input'));
+      descTextEl.value = mockSession.description;
+      descTextEl.dispatchEvent(new Event('input'));
+      component.sessionForm!.controls['teacher_id'].setValue(0);
+
+      fixture.detectChanges();
+      tick();
+
+      expect(component.sessionForm?.value).toEqual({
+        date: mockSession.date.toISOString().split('T')[0],
+        description: mockSession.description,
+        name: mockSession.name,
+        teacher_id: 0,
+      });
+
+      // ASSERT the button save is enabled
+      expect(saveBtnEl.disabled).toBeFalsy();
+
+      // ACT
+      saveBtnEl.click();
+
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT DETAIL HTTP REQUEST
+      const reqCreate = httpMock.expectOne(`api/session`);
+      expect(reqCreate.request.method).toBe('POST');
+      reqCreate.flush(mockSession);
+
+      // WAIT FOR CHANGE IN THE DOM
+      fixture.detectChanges();
+      tick();
+
+      // ASSERT SNACKBAR + REDIRECTION
+      expect(spySnackBarOpen).toHaveBeenCalledWith(
+        'Session created !',
+        'Close',
+        { duration: 3000 }
+      );
+
+      tick(3000);
+      expect(location.path()).toBe('/sessions');
+    }));
   });
 });
