@@ -218,6 +218,86 @@ describe('FormComponent', () => {
           teacher_id: '',
         });
       });
+
+      it('should mark name field as invalid when name is empty', () => {
+        // Init
+        fixture.detectChanges();
+
+        // ARRANGE
+        const nameEl = component.sessionForm!.controls['name'];
+
+        // ACT
+        nameEl.setValue(''); // name empty
+
+        // ASSERT
+        expect(nameEl.valid).toBeFalsy();
+        expect(nameEl.getError('required')).toBeTruthy();
+      });
+
+      it('should mark date field as invalid when date is empty', () => {
+        // Init
+        fixture.detectChanges();
+
+        // ARRANGE
+        const dateEl = component.sessionForm!.controls['date'];
+
+        // ACT
+        dateEl.setValue(''); // date empty
+
+        // ASSERT
+        expect(dateEl.valid).toBeFalsy();
+        expect(dateEl.getError('required')).toBeTruthy();
+      });
+
+      it('should mark teachers field as invalid when teachers is empty', () => {
+        // Init
+        fixture.detectChanges();
+
+        // ARRANGE
+        const tearcherSelect = component.sessionForm!.controls['teacher_id'];
+
+        // ACT
+        tearcherSelect.setValue(null); // select empty
+
+        // ASSERT
+        expect(tearcherSelect.valid).toBeFalsy();
+        expect(tearcherSelect.getError('required')).toBeTruthy();
+      });
+
+      it('should mark description field as invalid when description is empty', () => {
+        // Init
+        fixture.detectChanges();
+
+        // ARRANGE
+        const descriptionEl = component.sessionForm!.controls['description'];
+
+        // ACT
+        descriptionEl.setValue(''); // description empty
+
+        // ASSERT
+        expect(descriptionEl.valid).toBeFalsy();
+        expect(descriptionEl.getError('required')).toBeTruthy();
+      });
+
+      it('should mark the form as valid when all fields have valid input', () => {
+        // Init
+        fixture.detectChanges();
+
+        // ARRANGE
+        const nameEl = component.sessionForm!.controls['name'];
+        const dateEl = component.sessionForm!.controls['date'];
+        const tearcherSelect = component.sessionForm!.controls['teacher_id'];
+        const descriptionEl = component.sessionForm!.controls['description'];
+
+        // ACT
+        nameEl.setValue(mockSession.name);
+        dateEl.setValue(mockSession.date);
+        tearcherSelect.setValue(mockSession.teacher_id);
+        descriptionEl.setValue(mockSession.description);
+
+        // ASSERT
+        expect(component.sessionForm!.valid).toBeTruthy();
+      });
     });
   });
 });
