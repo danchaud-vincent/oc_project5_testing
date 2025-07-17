@@ -22,6 +22,8 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { getByDataTest } from 'src/test-utils/test-utils';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ListComponent } from '../list/list.component';
 
 describe('DetailComponent', () => {
   let component: DetailComponent;
@@ -46,6 +48,19 @@ describe('DetailComponent', () => {
   };
 
   const sessionId: string = mockSession.id.toString();
+
+  const mockNoUsersSession = {
+    id: 1,
+    name: 'session1',
+    description: 'a session',
+    date: new Date('2025-12-01'),
+    teacher_id: 1,
+    users: [],
+    createdAt: new Date('2025-01-01'),
+    updatedAt: new Date('2025-01-01'),
+  };
+
+  const sessionNoUsersId = mockNoUsersSession.id;
 
   const mockTeacher = {
     id: 1,
@@ -92,6 +107,8 @@ describe('DetailComponent', () => {
       },
     },
   };
+
+  const testRoutes = [{ path: 'sessions', component: ListComponent }];
 
   describe('Unit Test Suite', () => {
     const mockSessionApiService = {
@@ -248,15 +265,16 @@ describe('DetailComponent', () => {
     });
   });
 
-  describe('Unit test as USER', () => {
+  describe('Integration Test Suite', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [
-          RouterTestingModule,
+          RouterTestingModule.withRoutes(testRoutes),
           HttpClientModule,
           MatSnackBarModule,
           ReactiveFormsModule,
           HttpClientTestingModule,
+          BrowserAnimationsModule,
         ],
         declarations: [DetailComponent],
         providers: [
@@ -276,13 +294,6 @@ describe('DetailComponent', () => {
       matSnackBar = TestBed.inject(MatSnackBar);
       teacherService = TestBed.inject(TeacherService);
       httpMock = TestBed.inject(HttpTestingController);
-
-      // ARRANGE
-      sessionService.sessionInformation =
-        mockAdminSessionService.sessionInformation;
-
-      fixture = TestBed.createComponent(DetailComponent);
-      component = fixture.componentInstance;
     });
 
     afterEach(() => {
@@ -290,6 +301,15 @@ describe('DetailComponent', () => {
     });
 
     describe('Integration Test as ADMIN', () => {
+      beforeEach(() => {
+        // ARRANGE
+        sessionService.sessionInformation =
+          mockAdminSessionService.sessionInformation;
+
+        fixture = TestBed.createComponent(DetailComponent);
+        component = fixture.componentInstance;
+      });
+
       it('should display delete button and hide participate menu buttons when Admin is logged', fakeAsync(() => {
         // ACT
         fixture.detectChanges();
@@ -323,6 +343,152 @@ describe('DetailComponent', () => {
         // ASSERT
         expect(deleteBtnEl).not.toBeNull();
         expect(participateMenuEl).toBeNull();
+      }));
+
+      it('should delete a session and go to the sessions Page when delete button is clicked', fakeAsync(() => {
+        // ARRANGE
+        const spyNavigate = jest.spyOn(router, 'navigate');
+        const spyMatSnackBar = jest.spyOn(matSnackBar, 'open');
+
+        // ACT
+        fixture.detectChanges();
+
+        // ASSERT DETAIL HTTP REQUEST
+        const reqDetail = httpMock.expectOne(`api/session/${sessionId}`);
+        expect(reqDetail.request.method).toBe('GET');
+        reqDetail.flush(mockSession);
+
+        // WAIT FOR CHANGE IN THE DOM
+        fixture.detectChanges();
+        tick();
+
+        // ASSERT TEACHERS HTTP REQUEST
+        const reqTeacherDetail = httpMock.expectOne(
+          `api/teacher/${mockTeacher.id}`
+        );
+        expect(reqTeacherDetail.request.method).toBe('GET');
+        reqTeacherDetail.flush(mockTeacher);
+
+        // GET HTML ELEMENTS
+        const deleteBtnEl = getByDataTest(
+          fixture,
+          'delete-btn'
+        ) as HTMLButtonElement;
+
+        fixture.detectChanges();
+        tick();
+
+        deleteBtnEl.click();
+        fixture.detectChanges();
+        tick();
+
+        // ASSERT DELETE HTTP REQUEST
+        const reqDelete = httpMock.expectOne(`api/session/${mockSession.id}`);
+        expect(reqDelete.request.method).toBe('DELETE');
+        reqDelete.flush(true);
+
+        fixture.detectChanges();
+        tick(3000);
+
+        // ASSERT
+        expect(spyMatSnackBar).toHaveBeenCalledWith(
+          'Session deleted !',
+          'Close',
+          { duration: 3000 }
+        );
+        expect(spyNavigate).toHaveBeenCalledWith(['sessions']);
+        expect(location.path()).toBe('/sessions');
+      }));
+    });
+
+    describe('Integration Test as USER', () => {
+      beforeEach(() => {
+        // ARRANGE
+        sessionService.sessionInformation =
+          mockUserSessionService.sessionInformation;
+
+        fixture = TestBed.createComponent(DetailComponent);
+        component = fixture.componentInstance;
+      });
+
+      it('should participate btn be enabled and unparticipate btn be null when the user is not register in a session', fakeAsync(() => {
+        // ACT
+        fixture.detectChanges();
+
+        // ASSERT DETAIL HTTP REQUEST
+        const reqDetail = httpMock.expectOne(`api/session/${sessionNoUsersId}`);
+        expect(reqDetail.request.method).toBe('GET');
+        reqDetail.flush(mockNoUsersSession); // return a class with no students
+
+        // ASSERT TEACHERS HTTP REQUEST
+        const reqTeacherDetail = httpMock.expectOne(
+          `api/teacher/${mockTeacher.id}`
+        );
+        expect(reqTeacherDetail.request.method).toBe('GET');
+        reqTeacherDetail.flush(mockTeacher); // return a teacher for the class
+
+        // WAIT FOR CHANGE IN THE DOM
+        fixture.detectChanges();
+        tick();
+
+        // GET HTML ELEMENTS
+        const deleteBtnEl = getByDataTest(
+          fixture,
+          'delete-btn'
+        ) as HTMLButtonElement;
+        const participateBtnEl = getByDataTest(
+          fixture,
+          'participate-btn'
+        ) as HTMLElement;
+        const unParticipateBtnEl = getByDataTest(
+          fixture,
+          'unparticipate-btn'
+        ) as HTMLElement;
+
+        // ASSERT
+        expect(deleteBtnEl).toBeNull(); // USER SO NO DELETE BTN
+        expect(participateBtnEl).not.toBeNull();
+        expect(unParticipateBtnEl).toBeNull();
+      }));
+
+      it('should unparticipate btn be enabled and participate btn be null when the user is registered in a session', fakeAsync(() => {
+        // ACT
+        fixture.detectChanges();
+
+        // ASSERT DETAIL HTTP REQUEST
+        const reqDetail = httpMock.expectOne(`api/session/${sessionNoUsersId}`);
+        expect(reqDetail.request.method).toBe('GET');
+        reqDetail.flush(mockSession); // return a class you participated in
+
+        // ASSERT TEACHERS HTTP REQUEST
+        const reqTeacherDetail = httpMock.expectOne(
+          `api/teacher/${mockTeacher.id}`
+        );
+        expect(reqTeacherDetail.request.method).toBe('GET');
+        reqTeacherDetail.flush(mockTeacher); // return a teacher for the class
+
+        // WAIT FOR CHANGE IN THE DOM
+        fixture.detectChanges();
+        tick();
+
+        // GET HTML ELEMENTS
+        const deleteBtnEl = getByDataTest(
+          fixture,
+          'delete-btn'
+        ) as HTMLButtonElement;
+        const participateBtnEl = getByDataTest(
+          fixture,
+          'participate-btn'
+        ) as HTMLElement;
+        const unParticipateBtnEl = getByDataTest(
+          fixture,
+          'unparticipate-btn'
+        ) as HTMLElement;
+
+        // ASSERT
+        expect(deleteBtnEl).toBeNull(); // USER SO NO DELETE BTN
+        expect(participateBtnEl).toBeNull();
+        expect(unParticipateBtnEl).not.toBeNull();
       }));
     });
   });
