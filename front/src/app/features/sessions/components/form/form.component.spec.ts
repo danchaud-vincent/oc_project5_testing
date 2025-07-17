@@ -55,7 +55,7 @@ describe('FormComponent', () => {
   let location: Location;
   let httpMock: HttpTestingController;
   let sessionService: SessionService;
-  let tearcherService: TeacherService;
+  let teacherService: TeacherService;
   let sessionApiService: SessionApiService;
   let matSnackBar: MatSnackBar;
 
@@ -330,7 +330,7 @@ describe('FormComponent', () => {
       router = TestBed.inject(Router);
       sessionService = TestBed.inject(SessionService);
       sessionApiService = TestBed.inject(SessionApiService);
-      tearcherService = TestBed.inject(TeacherService);
+      teacherService = TestBed.inject(TeacherService);
       location = TestBed.inject(Location);
       httpMock = TestBed.inject(HttpTestingController);
       matSnackBar = TestBed.inject(MatSnackBar);
