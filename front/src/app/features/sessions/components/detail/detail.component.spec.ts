@@ -74,12 +74,20 @@ describe('DetailComponent', () => {
   const userId: string =
     mockUserSessionService.sessionInformation.id.toString();
 
+  const mockActivatedRoute = {
+    snapshot: {
+      paramMap: {
+        get: jest.fn().mockReturnValue(sessionId),
+      },
+    },
+  };
+
   describe('Unit Test Suite', () => {
     const mockSessionApiService = {
-      delete: jest.fn(),
+      delete: jest.fn().mockReturnValue(of(true)),
       detail: jest.fn().mockReturnValue(of(mockSession)),
-      participate: jest.fn(),
-      unParticipate: jest.fn(),
+      participate: jest.fn().mockReturnValue(of(true)),
+      unParticipate: jest.fn().mockReturnValue(of(true)),
     };
     const mockTeacherService = {
       detail: jest.fn().mockReturnValue(of(mockteacher)),
@@ -90,14 +98,6 @@ describe('DetailComponent', () => {
     };
 
     describe('Unit test as USER', () => {
-      const mockActivatedRoute = {
-        snapshot: {
-          paramMap: {
-            get: jest.fn().mockReturnValue(sessionId),
-          },
-        },
-      };
-
       beforeEach(async () => {
         await TestBed.configureTestingModule({
           imports: [
@@ -123,14 +123,14 @@ describe('DetailComponent', () => {
         component = fixture.componentInstance;
       });
 
-      it('should create', () => {
+      it('should create the component', () => {
         // ACT
         fixture.detectChanges();
         // ASSERT
         expect(component).toBeTruthy();
       });
 
-      it('should fetch the session on Init by calling sessionApiService and teacherService', () => {
+      it('should load session and teacher info on init', () => {
         // ARRANGE
         const isParticipate: boolean = mockSession.users.some(
           (u) => u === mockUserSessionService.sessionInformation.id
@@ -167,7 +167,73 @@ describe('DetailComponent', () => {
         expect(spyWindowBack).toHaveBeenCalled();
       });
 
-      it('should display the snackBar and navigate to /sessions on delete', () => {});
+      it('should call participate() and send correct params for user', () => {
+        // ACT
+        fixture.detectChanges();
+        component.participate();
+
+        // ASSERT
+        expect(mockSessionApiService.participate).toHaveBeenCalledWith(
+          sessionId,
+          userId
+        );
+      });
+
+      it('should call unParticipate() and send correct params for user', () => {
+        // ACT
+        fixture.detectChanges();
+        component.unParticipate();
+
+        // ASSERT
+        expect(mockSessionApiService.unParticipate).toHaveBeenCalledWith(
+          sessionId,
+          userId
+        );
+      });
+    });
+
+    describe('Unit Test as ADMIN', () => {
+      beforeEach(async () => {
+        await TestBed.configureTestingModule({
+          imports: [
+            RouterTestingModule,
+            HttpClientModule,
+            MatSnackBarModule,
+            ReactiveFormsModule,
+          ],
+          declarations: [DetailComponent],
+          providers: [
+            { provide: SessionService, useValue: mockAdminSessionService },
+            { provide: SessionApiService, useValue: mockSessionApiService },
+            { provide: TeacherService, useValue: mockTeacherService },
+            { provide: MatSnackBar, useValue: mockMatSnackBar },
+            { provide: ActivatedRoute, useValue: mockActivatedRoute },
+          ],
+        }).compileComponents();
+
+        // inject
+        router = TestBed.inject(Router);
+
+        fixture = TestBed.createComponent(DetailComponent);
+        component = fixture.componentInstance;
+      });
+
+      it('should show confirmation and navigate after admin deletes a session', () => {
+        // ARRANGE
+        const spyNavigate = jest.spyOn(router, 'navigate');
+
+        // ACT
+        fixture.detectChanges();
+        component.delete();
+
+        // ASSERT
+        expect(mockMatSnackBar.open).toHaveBeenCalledWith(
+          'Session deleted !',
+          'Close',
+          { duration: 3000 }
+        );
+        expect(spyNavigate).toHaveBeenCalledWith(['sessions']);
+      });
     });
   });
 });
