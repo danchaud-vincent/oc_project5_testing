@@ -70,6 +70,8 @@ describe('FormComponent', () => {
     updatedAt: new Date('2025-01-01'),
   };
 
+  const sessionId: string = mockSession.id.toString();
+
   const mockAdminSessionService = {
     sessionInformation: {
       token: 'Bearer',
@@ -98,9 +100,6 @@ describe('FormComponent', () => {
       updatedAt: new Date('2025-01-02'),
     },
   ];
-
-  const sessionId: string =
-    mockAdminSessionService.sessionInformation.id.toString();
 
   const mockActivatedRoute = {
     snapshot: {
@@ -205,9 +204,7 @@ describe('FormComponent', () => {
         expect(mockActivatedRoute.snapshot.paramMap.get).toHaveBeenCalledWith(
           'id'
         );
-        expect(mockSessionApiService.detail).toHaveBeenCalledWith(
-          `${sessionId}`
-        );
+        expect(mockSessionApiService.detail).toHaveBeenCalledWith(sessionId);
 
         expect(component.sessionForm!.value).toEqual({
           name: mockSession.name,
