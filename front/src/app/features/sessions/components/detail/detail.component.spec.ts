@@ -1,5 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -12,6 +17,11 @@ import { Location } from '@angular/common';
 import { SessionApiService } from '../../services/session-api.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { of } from 'rxjs';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+import { getByDataTest } from 'src/test-utils/test-utils';
 
 describe('DetailComponent', () => {
   let component: DetailComponent;
@@ -22,6 +32,7 @@ describe('DetailComponent', () => {
   let router: Router;
   let location: Location;
   let matSnackBar: MatSnackBar;
+  let httpMock: HttpTestingController;
 
   const mockSession = {
     id: 1,
@@ -36,7 +47,7 @@ describe('DetailComponent', () => {
 
   const sessionId: string = mockSession.id.toString();
 
-  const mockteacher = {
+  const mockTeacher = {
     id: 1,
     lastName: 'teacher',
     firstName: 'teacher',
@@ -90,7 +101,7 @@ describe('DetailComponent', () => {
       unParticipate: jest.fn().mockReturnValue(of(true)),
     };
     const mockTeacherService = {
-      detail: jest.fn().mockReturnValue(of(mockteacher)),
+      detail: jest.fn().mockReturnValue(of(mockTeacher)),
     };
 
     const mockMatSnackBar = {
@@ -234,6 +245,85 @@ describe('DetailComponent', () => {
         );
         expect(spyNavigate).toHaveBeenCalledWith(['sessions']);
       });
+    });
+  });
+
+  describe('Unit test as USER', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        imports: [
+          RouterTestingModule,
+          HttpClientModule,
+          MatSnackBarModule,
+          ReactiveFormsModule,
+          HttpClientTestingModule,
+        ],
+        declarations: [DetailComponent],
+        providers: [
+          SessionService,
+          SessionApiService,
+          TeacherService,
+          MatSnackBar,
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        ],
+      }).compileComponents();
+
+      // inject
+      router = TestBed.inject(Router);
+      location = TestBed.inject(Location);
+      sessionApiService = TestBed.inject(SessionApiService);
+      sessionService = TestBed.inject(SessionService);
+      matSnackBar = TestBed.inject(MatSnackBar);
+      teacherService = TestBed.inject(TeacherService);
+      httpMock = TestBed.inject(HttpTestingController);
+
+      // ARRANGE
+      sessionService.sessionInformation =
+        mockAdminSessionService.sessionInformation;
+
+      fixture = TestBed.createComponent(DetailComponent);
+      component = fixture.componentInstance;
+    });
+
+    afterEach(() => {
+      httpMock.verify();
+    });
+
+    describe('Integration Test as ADMIN', () => {
+      it('should display delete button and hide participate menu buttons when Admin is logged', fakeAsync(() => {
+        // ACT
+        fixture.detectChanges();
+
+        // ASSERT DETAIL HTTP REQUEST
+        const reqDetail = httpMock.expectOne(`api/session/${sessionId}`);
+        expect(reqDetail.request.method).toBe('GET');
+        reqDetail.flush(mockSession);
+
+        // WAIT FOR CHANGE IN THE DOM
+        fixture.detectChanges();
+        tick();
+
+        // ASSERT TEACHERS HTTP REQUEST
+        const reqTeacherDetail = httpMock.expectOne(
+          `api/teacher/${mockTeacher.id}`
+        );
+        expect(reqTeacherDetail.request.method).toBe('GET');
+        reqTeacherDetail.flush(mockTeacher);
+
+        // GET HTML ELEMENTS
+        const deleteBtnEl = getByDataTest(
+          fixture,
+          'delete-btn'
+        ) as HTMLButtonElement;
+        const participateMenuEl = getByDataTest(
+          fixture,
+          'participate-menu'
+        ) as HTMLElement;
+
+        // ASSERT
+        expect(deleteBtnEl).not.toBeNull();
+        expect(participateMenuEl).toBeNull();
+      }));
     });
   });
 });
