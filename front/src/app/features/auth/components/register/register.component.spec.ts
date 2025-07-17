@@ -337,6 +337,7 @@ describe('RegisterComponent', () => {
 
       // get submit btn
       const { submitBtnEl } = getHtmlElements();
+      expect(submitBtnEl.disabled).toBeTruthy();
 
       // ACT filling form
       fillingForm(
@@ -345,6 +346,8 @@ describe('RegisterComponent', () => {
         mockRegisterRequest.email,
         mockRegisterRequest.password
       );
+
+      expect(submitBtnEl.disabled).toBeFalsy();
 
       // ACT submit form
       submitBtnEl.click();
