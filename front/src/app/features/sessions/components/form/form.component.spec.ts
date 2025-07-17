@@ -455,23 +455,24 @@ describe('FormComponent', () => {
         'description'
       ) as HTMLTextAreaElement;
 
-      nameInputEl.value = mockSession.name;
+      // VALUES
+      const newSessionName = 'new session';
+      const newSessionDate = new Date('2025-12-12').toISOString().split('T')[0];
+      const newSessionDescription = 'new session description';
+      const newSessionTeacherId = 0;
+
+      nameInputEl.value = newSessionName;
       nameInputEl.dispatchEvent(new Event('input'));
-      dateInputEl.value = mockSession.date.toISOString().split('T')[0];
+      dateInputEl.value = newSessionDate;
       dateInputEl.dispatchEvent(new Event('input'));
-      descTextEl.value = mockSession.description;
+      descTextEl.value = newSessionDescription;
       descTextEl.dispatchEvent(new Event('input'));
-      component.sessionForm!.controls['teacher_id'].setValue(0);
+      component.sessionForm!.controls['teacher_id'].setValue(
+        newSessionTeacherId
+      );
 
       fixture.detectChanges();
       tick();
-
-      expect(component.sessionForm?.value).toEqual({
-        date: mockSession.date.toISOString().split('T')[0],
-        description: mockSession.description,
-        name: mockSession.name,
-        teacher_id: 0,
-      });
 
       // ASSERT the button save is enabled
       expect(saveBtnEl.disabled).toBeFalsy();
@@ -485,7 +486,22 @@ describe('FormComponent', () => {
       // ASSERT DETAIL HTTP REQUEST
       const reqCreate = httpMock.expectOne(`api/session`);
       expect(reqCreate.request.method).toBe('POST');
-      reqCreate.flush(mockSession);
+      expect(reqCreate.request.body).toEqual({
+        name: newSessionName,
+        date: newSessionDate,
+        description: newSessionDescription,
+        teacher_id: newSessionTeacherId,
+      });
+      reqCreate.flush({
+        id: 12,
+        name: newSessionName,
+        description: newSessionDescription,
+        date: newSessionDate,
+        teacher_id: newSessionTeacherId,
+        users: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }); // mock the new session response
 
       // WAIT FOR CHANGE IN THE DOM
       fixture.detectChanges();
