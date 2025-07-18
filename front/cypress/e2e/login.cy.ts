@@ -12,6 +12,13 @@ describe('Login spec', () => {
     cy.visit('/login');
   });
 
+  it('should return to login when trying to go to sessions (AuthGard)', () => {
+    cy.visit('/sessions');
+
+    // ASSERT
+    cy.location('pathname').should('equal', '/login');
+  });
+
   it('should login successfully as an ADMIN', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
