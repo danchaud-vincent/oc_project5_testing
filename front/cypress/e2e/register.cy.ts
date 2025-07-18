@@ -20,4 +20,26 @@ describe('Register spec', () => {
     cy.location('pathname').should('equal', '/login');
     cy.get('[data-test="login-form"]').should('be.visible');
   });
+
+  it('should detect an error when register failed', () => {
+    // ARRANGE: mock an auth error
+    cy.intercept('POST', '/api/auth/register', {
+      statusCode: 404,
+      body: {
+        message: 'Registration failed',
+      },
+    });
+
+    // ACT: fill the form and submit
+    cy.get('[data-test="firstName"]').type('username');
+    cy.get('[data-test="lastName"]').type('userLastName');
+    cy.get('[data-test="email"]').type('test@email.com');
+    cy.get('[data-test="password"]').type('password123');
+    cy.get('[data-test="submit-btn"]').click();
+
+    // ASSERT: expect an error message
+    cy.get('[data-test="error"]')
+      .should('be.visible')
+      .should('have.text', 'An error occurred');
+  });
 });
