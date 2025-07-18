@@ -42,4 +42,24 @@ describe('Register spec', () => {
       .should('be.visible')
       .should('have.text', 'An error occurred');
   });
+
+  it('should hide the submit button when register form inputs are not valid', () => {
+    // ARRANGE: mock http request
+    cy.intercept('POST', '/api/auth/register', {
+      body: {},
+    });
+
+    // ACT : fill the form with invalid inputs
+    cy.get('[data-test="firstName"]').type('t'); // length < 3
+    cy.get('[data-test="lastName"]').type('t'); // length < 3
+    cy.get('[data-test="email"]').type('test'); // not format ...@...
+    cy.get('[data-test="password"]').type('t'); // length < 3
+
+    // ASSERT
+    cy.get('[data-test="firstName"]').should('have.class', 'ng-invalid');
+    cy.get('[data-test="lastName"]').should('have.class', 'ng-invalid');
+    cy.get('[data-test="email"]').should('have.class', 'ng-invalid');
+    cy.get('[data-test="password"]').should('have.class', 'ng-invalid');
+    cy.get('[data-test="submit-btn"]').should('be.disabled');
+  });
 });
