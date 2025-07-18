@@ -1,6 +1,9 @@
+import { SessionInformation } from '../../src/app/interfaces/sessionInformation.interface';
+import { User } from '../../src/app/interfaces/user.interface';
+
 describe('Me spec', () => {
   describe('ADMIN account', () => {
-    const mockAdminSessionInfo = {
+    const mockAdminSessionInfo: SessionInformation = {
       token: 'Bearer',
       type: 'token',
       id: 1,
@@ -10,7 +13,7 @@ describe('Me spec', () => {
       admin: true,
     };
 
-    const admin = {
+    const admin: User = {
       id: 1,
       email: 'admin@email.com',
       lastName: 'admin',
@@ -68,7 +71,7 @@ describe('Me spec', () => {
   });
 
   describe('USER account', () => {
-    const mockUserSessionInfo = {
+    const mockUserSessionInfo: SessionInformation = {
       token: 'Bearer',
       type: 'token',
       id: 2,
@@ -78,7 +81,7 @@ describe('Me spec', () => {
       admin: false,
     };
 
-    const user = {
+    const user: User = {
       id: 2,
       email: 'user@email.com',
       lastName: 'user',

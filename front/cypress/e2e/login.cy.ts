@@ -1,11 +1,24 @@
+import { SessionInformation } from '../../src/app/interfaces/sessionInformation.interface';
+
 describe('Login spec', () => {
-  const mockSessionInfo = {
-    token: '',
-    type: '',
+  const mockAdminSessionInfo: SessionInformation = {
+    token: 'Bearer',
+    type: 'token',
     id: 1,
-    username: 'username',
-    firstName: 'firstname',
-    lastName: 'lastName',
+    username: 'admin@email.com',
+    firstName: 'admin',
+    lastName: 'admin',
+    admin: true,
+  };
+
+  const mockUserSessionInfo: SessionInformation = {
+    token: 'Bearer',
+    type: 'token',
+    id: 2,
+    username: 'user@email.com',
+    firstName: 'user',
+    lastName: 'user',
+    admin: false,
   };
 
   beforeEach(() => {
@@ -22,10 +35,7 @@ describe('Login spec', () => {
   it('should login successfully as an ADMIN', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
-      body: {
-        ...mockSessionInfo,
-        admin: true,
-      },
+      body: mockAdminSessionInfo,
     });
 
     cy.intercept(
@@ -50,10 +60,7 @@ describe('Login spec', () => {
   it('should login successfully as an USER', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
-      body: {
-        ...mockSessionInfo,
-        admin: false,
-      },
+      body: mockUserSessionInfo,
     });
 
     cy.intercept(
@@ -98,10 +105,7 @@ describe('Login spec', () => {
   it('should hide the submit button when login credentials dont respect the requirements', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
-      body: {
-        ...mockSessionInfo,
-        admin: true,
-      },
+      body: mockAdminSessionInfo,
     });
 
     cy.intercept(
