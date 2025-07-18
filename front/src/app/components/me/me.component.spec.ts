@@ -48,21 +48,10 @@ describe('MeComponent', () => {
   const mockAdmin = {
     id: 1,
     email: 'admin@email.com',
-    lastName: 'test',
+    lastName: 'admin',
     firstName: 'admin',
     admin: true,
     password: 'admin',
-    createdAt: new Date('2025-01-01'),
-    updatedAt: new Date('2025-01-01'),
-  };
-
-  const mockUser = {
-    id: 2,
-    email: 'user@email.com',
-    lastName: 'test',
-    firstName: 'user',
-    admin: false,
-    password: 'user',
     createdAt: new Date('2025-01-01'),
     updatedAt: new Date('2025-01-01'),
   };
@@ -72,12 +61,23 @@ describe('MeComponent', () => {
       token: 'Bearer',
       type: 'token',
       id: 1,
-      username: 'admin',
+      username: 'admin@email.com',
       firstName: 'admin',
-      lastName: 'test',
+      lastName: 'admin',
       admin: true,
     },
     logOut: jest.fn(),
+  };
+
+  const mockUser = {
+    id: 2,
+    email: 'user@email.com',
+    lastName: 'user',
+    firstName: 'user',
+    admin: false,
+    password: 'user',
+    createdAt: new Date('2025-01-01'),
+    updatedAt: new Date('2025-01-01'),
   };
 
   const mockSessionServiceUser = {
@@ -85,9 +85,9 @@ describe('MeComponent', () => {
       token: 'Bearer',
       type: 'token',
       id: 2,
-      username: 'user',
+      username: 'user@email.com',
       firstName: 'user',
-      lastName: 'test',
+      lastName: 'user',
       admin: false,
     },
     logOut: jest.fn(),
