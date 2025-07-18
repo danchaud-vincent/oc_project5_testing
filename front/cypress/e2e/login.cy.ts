@@ -23,7 +23,7 @@ describe('Login spec', () => {
     cy.visit('/login');
   });
 
-  it('Login successfull as an ADMIN', () => {
+  it('should login successfully as an ADMIN', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
       body: mockAdminSessionInfo,
@@ -48,7 +48,7 @@ describe('Login spec', () => {
     cy.get('[data-test="create-btn"]').should('be.visible');
   });
 
-  it('Login successfull as an USER', () => {
+  it('should login successfully as an USER', () => {
     // ARRANGE: mock http request
     cy.intercept('POST', '/api/auth/login', {
       body: mockUserSessionInfo,
