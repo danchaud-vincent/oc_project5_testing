@@ -45,7 +45,7 @@ describe('Login spec', () => {
 
     // ASSERT: on sessions page
     cy.location('pathname').should('equal', '/sessions');
-    cy.get('[data-test="create-btn"]').should('be.visible');
+    cy.get('[data-test="rentals-title"]').should('be.visible');
   });
 
   it('should login successfully as an USER', () => {
@@ -88,7 +88,9 @@ describe('Login spec', () => {
     cy.get('[data-test="submit-btn"]').click();
 
     // ASSERT: expect error message
-    cy.get('[data-test="error"]').should('have.text', 'An error occurred');
+    cy.get('[data-test="error"]')
+      .should('be.visible')
+      .should('have.text', 'An error occurred');
   });
 
   it('should hide the submit button when login credentials dont respect the requirements', () => {
