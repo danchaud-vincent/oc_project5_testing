@@ -5,8 +5,8 @@
         <button mat-icon-button routerLink="/sessions">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <h1 *ngIf="!onUpdate">Create session</h1>
-        <h1 *ngIf="onUpdate">Update session</h1>
+        <h1 data-test="createSession-title" *ngIf="!onUpdate">Create session</h1>
+        <h1 data-test="updateSession-title" *ngIf="onUpdate">Update session</h1>
       </div>
     </mat-card-title>
     <mat-card-content *ngIf="sessionForm">
