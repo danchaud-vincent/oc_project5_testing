@@ -15,6 +15,7 @@ import { SessionService } from './services/session.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { getByDataTest } from 'src/test-utils/test-utils';
+import { SessionInformation } from './interfaces/sessionInformation.interface';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -25,7 +26,7 @@ describe('AppComponent', () => {
 
   const testRoutes = [{ path: '', component: AppComponent }];
 
-  const mockSessionInformation = {
+  const mockSessionInformation: SessionInformation = {
     token: 'Bearer',
     type: 'token',
     id: 1,

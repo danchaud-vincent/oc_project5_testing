@@ -2,11 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 
 import { SessionService } from './session.service';
+import { SessionInformation } from '../interfaces/sessionInformation.interface';
 
 describe('SessionService', () => {
   let service: SessionService;
 
-  const mockSessionInformation = {
+  const mockSessionInformation: SessionInformation = {
     token: 'Bearer',
     type: 'token',
     id: 1,

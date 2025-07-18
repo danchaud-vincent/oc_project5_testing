@@ -50,7 +50,7 @@ describe('LoginComponent', () => {
   let sessionService: SessionService;
   let httpMock: HttpTestingController;
 
-  const mockLoginRequest = {
+  const mockLoginRequest: LoginRequest = {
     email: 'test@test.com',
     password: 'test!1234',
   };

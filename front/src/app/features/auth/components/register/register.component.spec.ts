@@ -26,6 +26,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Location } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { getByDataTest } from 'src/test-utils/test-utils';
+import { RegisterRequest } from '../../interfaces/registerRequest.interface';
 
 function getCommonImports(): any[] {
   return [
@@ -55,7 +56,7 @@ describe('RegisterComponent', () => {
     navigate: jest.fn(),
   };
 
-  const mockRegisterRequest = {
+  const mockRegisterRequest: RegisterRequest = {
     email: 'test@test.com',
     firstName: 'test',
     lastName: 'test',

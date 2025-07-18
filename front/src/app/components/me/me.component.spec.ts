@@ -24,6 +24,8 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
+import { User } from 'src/app/interfaces/user.interface';
 
 function getCommonImports() {
   return [
@@ -45,7 +47,7 @@ describe('MeComponent', () => {
   let matSnackBar: MatSnackBar;
   let httpMock: HttpTestingController;
 
-  const mockAdmin = {
+  const mockAdmin: User = {
     id: 1,
     email: 'admin@email.com',
     lastName: 'admin',
@@ -69,7 +71,7 @@ describe('MeComponent', () => {
     logOut: jest.fn(),
   };
 
-  const mockUser = {
+  const mockUser: User = {
     id: 2,
     email: 'user@email.com',
     lastName: 'user',
