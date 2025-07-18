@@ -73,12 +73,12 @@ describe('Login spec', () => {
     cy.get('[data-test="create-btn"]').should('not.exist');
   });
 
-  it('should detect an error when login credentials are wrong', () => {
+  it('should detect an error when login failed', () => {
     // ARRANGE: mock an auth error
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 404,
       body: {
-        message: 'An error occured',
+        message: 'Login failed',
       },
     }).as('loginError');
 
