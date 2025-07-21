@@ -33,7 +33,7 @@ describe('Sessions spec', () => {
       cy.wait('@getSessions');
     });
 
-    it('should display sessions, session information on edit form and then go back to /sessions', () => {
+    it('should display sessions, session information on detail and then go back to /sessions', () => {
       // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
@@ -41,34 +41,61 @@ describe('Sessions spec', () => {
 
       cy.intercept('GET', `/api/session/${session.id}`, {
         body: session,
-      }).as('editASession');
+      }).as('detailSession');
 
       const sessionTeacher = mockTeachers.find(
         (teacher) => teacher.id === session.teacher_id
       );
+
+      cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
+        body: sessionTeacher,
+      });
 
       // -------------- ASSERT --------------
       cy.get('[data-test="session"]').should('have.length', 1);
 
       // -------------- ACT --------------
       // click on edit button
-      cy.get('[data-test="edit-btn"]').click();
+      cy.get('[data-test="detail-btn"]').click();
 
-      cy.wait('@editASession');
+      cy.wait('@detailSession');
 
       // -------------- ASSERT --------------
-      cy.get('[data-test="name"]').should('have.value', session.name);
-      cy.get('[data-test="date"]').should(
-        'have.value',
-        session.date.toISOString().split('T')[0]
+      const regexSessionName = new RegExp(session.name, 'i');
+      cy.get('[data-test="sessionName"]')
+        .should('exist')
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.match(regexSessionName);
+        });
+      cy.get('[data-test="sessionTeacher"]').should(
+        'contain.text',
+        `${sessionTeacher!.firstName} ${sessionTeacher!.lastName.toUpperCase()}`
       );
-      cy.get('[data-test="description"]').should(
-        'have.value',
+
+      cy.get('[data-test="sessionUsers"]').should(
+        'contain.text',
+        session.users.length
+      );
+      cy.get('[data-test="sessionDescription"]').should(
+        'contain.text',
         session.description
       );
-      cy.get('[data-test="teacherSelect"]').should(
-        'have.text',
-        `${sessionTeacher!.firstName} ${sessionTeacher!.lastName}`
+      cy.get('[data-test="sessionCreatedDate"]').should(
+        'contain.text',
+        session.createdAt!.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      );
+      cy.get('[data-test="sessionUpdatedDate"]').should(
+        'contain.text',
+        session.updatedAt!.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
       );
 
       // -------------- ACT --------------
@@ -212,10 +239,12 @@ describe('Sessions spec', () => {
 
       cy.intercept('GET', `/api/session/${session.id}`, {
         body: session,
-      }).as('editASession');
+      }).as('detailSession');
+
       cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
         body: mockTeachers.find((teacher) => teacher.id === session.teacher_id),
       });
+
       cy.intercept('DELETE', `/api/session/${session.id}`, { body: null });
 
       cy.intercept('GET', '/api/session', {
@@ -226,7 +255,7 @@ describe('Sessions spec', () => {
       // click on edit button
       cy.get('[data-test="detail-btn"]').click();
 
-      cy.wait('@editASession');
+      cy.wait('@detailSession');
 
       // -------------- ASSERT --------------
       cy.location('pathname').should('equal', `/sessions/detail/${session.id}`);
@@ -251,7 +280,7 @@ describe('Sessions spec', () => {
 
       cy.intercept('GET', `/api/session/${session.id}`, {
         body: session,
-      }).as('editASession');
+      }).as('detailSession');
       cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
         body: mockTeachers.find((teacher) => teacher.id === session.teacher_id),
       });
@@ -260,7 +289,7 @@ describe('Sessions spec', () => {
       // click on edit button
       cy.get('[data-test="detail-btn"]').click();
 
-      cy.wait('@editASession');
+      cy.wait('@detailSession');
 
       // -------------- ASSERT --------------
       cy.get('[data-test="unparticipate-btn"]').should('not.exist');
@@ -321,7 +350,7 @@ describe('Sessions spec', () => {
 
       cy.intercept('GET', `/api/session/${session.id}`, {
         body: session,
-      }).as('editASession');
+      }).as('detailSession');
 
       // -------------- ACT --------------
       // click on detail button
@@ -339,7 +368,7 @@ describe('Sessions spec', () => {
 
       cy.intercept('GET', `/api/session/${sessionParticipate.id}`, {
         body: sessionParticipate,
-      }).as('editASession');
+      }).as('detailSession');
 
       cy.intercept('GET', `/api/teacher/${sessionParticipate.teacher_id}`, {
         body: mockTeachers.find(
@@ -351,7 +380,7 @@ describe('Sessions spec', () => {
       // click on edit button
       cy.get('[data-test="detail-btn"]').click();
 
-      cy.wait('@editASession');
+      cy.wait('@detailSession');
 
       // -------------- ASSERT --------------
       // check location
