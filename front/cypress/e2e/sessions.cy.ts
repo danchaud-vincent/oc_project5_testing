@@ -1,73 +1,30 @@
-import { SessionInformation } from '../../src/app/interfaces/sessionInformation.interface';
-import { User } from '../../src/app/interfaces/user.interface';
 import { Session } from '../../src/app/features/sessions/interfaces/session.interface';
-import { Teacher } from '../../src/app/interfaces/teacher.interface';
+
+import { mockTeachers } from 'cypress/fixtures/teachers.fixtures';
+import { mockAdminSessionInfo } from 'cypress/fixtures/adminSessionInformation.fixtures';
+import { mockUserSessionInfo } from 'cypress/fixtures/userSessionInformation.fixtures';
+import { admin } from 'cypress/fixtures/admin.fixtures';
+import { user } from 'cypress/fixtures/user.fixtures';
+import { session } from 'cypress/fixtures/session.fixtures';
 
 describe('Sessions spec', () => {
-  const mockTeachers: Teacher[] = [
-    {
-      id: 1,
-      lastName: 'name',
-      firstName: 'teacher1',
-      createdAt: new Date('2025-01-01'),
-      updatedAt: new Date('2025-01-01'),
-    },
-    {
-      id: 2,
-      lastName: 'name',
-      firstName: 'teacher2',
-      createdAt: new Date('2025-01-02'),
-      updatedAt: new Date('2025-01-02'),
-    },
-  ];
-
-  const session: Session = {
-    id: 1,
-    name: 'a session',
-    description: 'it is a session',
-    date: new Date('2025-01-01'),
-    teacher_id: 1,
-    users: [1, 2],
-    createdAt: new Date('2025-01-01'),
-    updatedAt: new Date('2025-01-01'),
-  };
-
-  const sessions: Session[] = [session];
-
   describe('Sessions as ADMIN', () => {
-    const mockAdminSessionInfo: SessionInformation = {
-      token: 'Bearer',
-      type: 'token',
-      id: 1,
-      username: 'admin@email.com',
-      firstName: 'admin',
-      lastName: 'admin',
-      admin: true,
-    };
-
-    const admin: User = {
-      id: 1,
-      email: 'admin@email.com',
-      lastName: 'admin',
-      firstName: 'admin',
-      admin: true,
-      password: 'admin',
-      createdAt: new Date('2025-01-01'),
-      updatedAt: new Date('2025-01-01'),
-    };
+    const sessionsList: Session[] = [session];
 
     beforeEach(() => {
+      // visit login page
       cy.visit('/login');
 
+      // mock HTTP requests for login
       cy.intercept('POST', '/api/auth/login', {
         body: mockAdminSessionInfo,
       }).as('login');
 
       cy.intercept('GET', '/api/session', {
-        body: sessions,
+        body: sessionsList,
       }).as('getSessions');
 
-      // ACT: fill the login form and submit
+      // fill the login form and submit
       cy.get('[data-test="email"]').type(admin.email);
       cy.get('[data-test="password"]').type(admin.password);
       cy.get('[data-test="submit-btn"]').click();
@@ -77,7 +34,7 @@ describe('Sessions spec', () => {
     });
 
     it('should create a session when an admin click on create btn', () => {
-      // ARRANGE
+      // -------------- ARRANGE --------------
       const newSession: Session = {
         id: 2,
         name: 'new session',
@@ -98,17 +55,19 @@ describe('Sessions spec', () => {
       }).as('createNewSession');
 
       cy.intercept('GET', '/api/session', {
-        body: [...sessions, newSession],
+        body: [...sessionsList, newSession],
       }).as('getNewSessions');
 
-      // ACT
+      // -------------- ACT --------------
+      // click on create button
       cy.get('[data-test="create-btn"]').click();
 
-      // ASSERT
+      // -------------- ASSERT --------------
       cy.location('pathname').should('equal', '/sessions/create');
       cy.get('[data-test="createSession-title"]').should('be.visible');
 
-      // ACT :FILL THE FORM OF THE SESSION and SAVE
+      // -------------- ACT --------------
+      // fill the form and create a new session
       cy.get('[data-test="name"]').type(newSession.name);
       cy.get('[data-test="date"]').type(
         newSession.date.toISOString().split('T')[0]
@@ -120,9 +79,10 @@ describe('Sessions spec', () => {
       cy.get('[data-test="description"]').type(newSession.description);
       cy.get('[data-test="save-btn"]').click();
 
-      // ASSERT
       cy.wait('@createNewSession');
       cy.wait('@getNewSessions');
+
+      // -------------- ASSERT --------------
       cy.location('pathname').should('equal', '/sessions');
       cy.contains('Session created !').should('be.visible');
       cy.get('[data-test="session"]').should('have.length', 2);
@@ -132,7 +92,7 @@ describe('Sessions spec', () => {
     });
 
     it('should update a session when an admin click on update btn', () => {
-      // ARRANGE
+      // -------------- ARRANGE --------------
       const sessionUpdated: Session = {
         id: 1,
         name: 'updated session',
@@ -149,25 +109,31 @@ describe('Sessions spec', () => {
       }).as('teachers');
 
       cy.intercept('GET', `/api/session/${session.id}`, {
-        body: sessions[0],
+        body: session,
       }).as('editASession');
+
+      // update the session with the new data
       cy.intercept('PUT', `/api/session/${session.id}`, {
         body: sessionUpdated,
       }).as('updateSession');
 
+      // return the sessions with the one updated
       cy.intercept('GET', '/api/session', {
         body: [sessionUpdated],
       }).as('getFinalSessions');
 
-      // ACT
+      // -------------- ACT --------------
+      // click on edit button
       cy.get('[data-test="edit-btn"]').click();
 
-      // ASSERT
       cy.wait('@editASession');
+
+      // -------------- ASSERT -------------
       cy.location('pathname').should('equal', `/sessions/update/${session.id}`);
       cy.get('[data-test="updateSession-title"]').should('be.visible');
 
-      // ACT :FILL THE FORM OF THE SESSION and SAVE
+      // -------------- ACT --------------
+      // fill the form and save the information
       cy.get('[data-test="name"]').clear().type(sessionUpdated.name);
       cy.get('[data-test="date"]')
         .clear()
@@ -181,9 +147,10 @@ describe('Sessions spec', () => {
         .type(sessionUpdated.description);
       cy.get('[data-test="save-btn"]').click();
 
-      // ASSERT
       cy.wait('@updateSession');
       cy.wait('@getFinalSessions');
+
+      // -------------- ASSERT --------------
       cy.location('pathname').should('equal', '/sessions');
       cy.contains('Session updated !').should('be.visible');
       cy.get('[data-test="sessionDescription"]')
@@ -192,13 +159,13 @@ describe('Sessions spec', () => {
     });
 
     it('should delete a session when an admin click on delete btn', () => {
-      // ARRANGE
+      // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
       }).as('teachers');
 
       cy.intercept('GET', `/api/session/${session.id}`, {
-        body: sessions[0],
+        body: session,
       }).as('editASession');
       cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
         body: mockTeachers.find((teacher) => teacher.id === session.teacher_id),
@@ -209,18 +176,22 @@ describe('Sessions spec', () => {
         body: [],
       }).as('getFinalSessions');
 
-      // ACT
+      // -------------- ACT --------------
+      // click on edit button
       cy.get('[data-test="detail-btn"]').click();
 
-      // ASSERT
       cy.wait('@editASession');
+
+      // -------------- ASSERT --------------
       cy.location('pathname').should('equal', `/sessions/detail/${session.id}`);
 
-      // ACT :CLICK ON DELETE BTN
+      // -------------- ACT --------------
+      // click on delete button
       cy.get('[data-test="delete-btn"]').should('be.visible').click();
 
-      // ASSERT
       cy.wait('@getFinalSessions');
+
+      // -------------- ASSERT --------------
       cy.location('pathname').should('equal', '/sessions');
       cy.contains('Session deleted !').should('be.visible');
       cy.get('[data-test="session"]').should('have.length', 0);
@@ -228,27 +199,6 @@ describe('Sessions spec', () => {
   });
 
   describe('Sessions as USER', () => {
-    const mockUserSessionInfo: SessionInformation = {
-      token: 'Bearer',
-      type: 'token',
-      id: 1,
-      username: 'user@email.com',
-      firstName: 'user',
-      lastName: 'user',
-      admin: false,
-    };
-
-    const user: User = {
-      id: 1,
-      email: 'user@email.com',
-      lastName: 'user',
-      firstName: 'user',
-      admin: false,
-      password: 'user',
-      createdAt: new Date('2025-01-01'),
-      updatedAt: new Date('2025-01-01'),
-    };
-
     const sessionParticipate: Session = {
       id: 1,
       name: 'a session',
@@ -266,23 +216,25 @@ describe('Sessions spec', () => {
       description: 'it is a session',
       date: new Date('2025-01-01'),
       teacher_id: 1,
-      users: [2],
+      users: [1],
       createdAt: new Date('2025-01-01'),
       updatedAt: new Date('2025-01-01'),
     };
 
     beforeEach(() => {
+      // visit login page
       cy.visit('/login');
 
+      // mock http requests for login phase
       cy.intercept('POST', '/api/auth/login', {
         body: mockUserSessionInfo,
       }).as('login');
 
       cy.intercept('GET', '/api/session', {
-        body: sessions,
+        body: [session],
       }).as('getSessions');
 
-      // ACT: fill the login form and submit
+      // fill the login form and submit
       cy.get('[data-test="email"]').type(user.email);
       cy.get('[data-test="password"]').type(user.password);
       cy.get('[data-test="submit-btn"]').click();
@@ -291,72 +243,91 @@ describe('Sessions spec', () => {
       cy.wait('@getSessions');
     });
 
-    it.only('cant delete a session', () => {
-      // ARRANGE
+    it('cant delete a session as a USER', () => {
+      // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
       }).as('teachers');
 
       cy.intercept('GET', `/api/session/${session.id}`, {
-        body: sessions[0],
+        body: session,
       }).as('editASession');
 
-      // ACT : go on detail session
+      // -------------- ACT --------------
+      // click on detail button
       cy.get('[data-test="detail-btn"]').click();
 
-      // ASSERT
+      // -------------- ASSERT --------------
       cy.get('[data-test="delete-btn"]').should('not.exist');
     });
 
     it('should particpate or unparticipate to a session when an user click on participate btn', () => {
-      // ARRANGE
+      // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
       }).as('teachers');
 
-      cy.intercept('GET', `/api/session/${session.id}`, {
-        body: sessions[0],
+      cy.intercept('GET', `/api/session/${sessionParticipate.id}`, {
+        body: sessionParticipate,
       }).as('editASession');
 
-      cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
-        body: mockTeachers.find((teacher) => teacher.id === session.teacher_id),
-      });
+      cy.intercept('GET', `/api/teacher/${sessionParticipate.teacher_id}`, {
+        body: mockTeachers.find(
+          (teacher) => teacher.id === sessionParticipate.teacher_id
+        ),
+      }).as('teacher');
+
+      // -------------- ACT --------------
+      // click on edit button
+      cy.get('[data-test="detail-btn"]').click();
+
+      cy.wait('@editASession');
+
+      // -------------- ASSERT --------------
+      // check location
+      cy.location('pathname').should(
+        'equal',
+        `/sessions/detail/${sessionParticipate.id}`
+      );
+
       cy.intercept(
         'DELETE',
-        `/api/session/${sessions[0].id}/participate/${user.id}`,
+        `/api/session/${sessionParticipate.id}/participate/${user.id}`,
         {}
       ).as('unParticipate');
 
-      // ACT : go on detail session
-      cy.get('[data-test="detail-btn"]').click();
-
-      // ASSERT location
-      cy.wait('@editASession');
-      cy.location('pathname').should('equal', `/sessions/detail/${session.id}`);
-
-      cy.intercept('GET', `/api/session/${session.id}`, {
+      cy.intercept('GET', `/api/session/${sessionUnParticipate.id}`, {
         body: sessionUnParticipate,
       }).as('unParticipatedSession');
 
-      // ASSERT btn and ACT: do not participate
+      // -------------- ASSERT then ACT --------------
+      // click on do not participate
       cy.get('[data-test="unparticipate-btn"]').should('be.visible').click();
-      cy.wait('@unParticipate');
 
-      // ASSERT
+      cy.wait('@unParticipate');
+      cy.wait('@unParticipatedSession');
+
+      // -------------- ASSERT --------------
       cy.get('[data-test="unparticipate-btn"]').should('not.exist');
 
       cy.intercept(
         'POST',
-        `/api/session/${sessions[0].id}/participate/${user.id}`,
+        `/api/session/${sessionParticipate.id}/participate/${user.id}`,
         {}
       ).as('participate');
-      cy.intercept('GET', `/api/session/${session.id}`, {
+
+      cy.intercept('GET', `/api/session/${sessionParticipate.id}`, {
         body: sessionParticipate,
       }).as('ParticipateSesssion');
 
-      // ASSERT btn and ACT: do participate
+      // -------------- ASSERT then ACT --------------
+      // click on do participate
       cy.get('[data-test="participate-btn"]').should('be.visible').click();
+
       cy.wait('@participate');
+      cy.wait('@ParticipateSesssion');
+
+      // -------------- ASSERT --------------
       cy.get('[data-test="participate-btn"]').should('not.exist');
       cy.get('[data-test="unparticipate-btn"]').should('be.visible');
     });
