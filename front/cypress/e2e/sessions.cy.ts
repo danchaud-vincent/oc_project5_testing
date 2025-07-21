@@ -33,6 +33,52 @@ describe('Sessions spec', () => {
       cy.wait('@getSessions');
     });
 
+    it.only('should display sessions, session information on edit form and then go back to /sessions', () => {
+      // -------------- ARRANGE --------------
+      cy.intercept('GET', '/api/teacher', {
+        body: mockTeachers,
+      }).as('teachers');
+
+      cy.intercept('GET', `/api/session/${session.id}`, {
+        body: session,
+      }).as('editASession');
+
+      const sessionTeacher = mockTeachers.find(
+        (teacher) => teacher.id === session.teacher_id
+      );
+
+      // -------------- ASSERT --------------
+      cy.get('[data-test="session"]').should('have.length', 1);
+
+      // -------------- ACT --------------
+      // click on edit button
+      cy.get('[data-test="edit-btn"]').click();
+
+      cy.wait('@editASession');
+
+      // -------------- ASSERT --------------
+      cy.get('[data-test="name"]').should('have.value', session.name);
+      cy.get('[data-test="date"]').should(
+        'have.value',
+        session.date.toISOString().split('T')[0]
+      );
+      cy.get('[data-test="description"]').should(
+        'have.value',
+        session.description
+      );
+      cy.get('[data-test="teacherSelect"]').should(
+        'have.text',
+        `${sessionTeacher!.firstName} ${sessionTeacher!.lastName}`
+      );
+
+      // -------------- ACT --------------
+      // go back
+      cy.get('[data-test="back-btn"]').should('exist').click();
+
+      // -------------- ASSERT --------------
+      cy.location('pathname').should('equal', '/sessions');
+    });
+
     it('should create a session when an admin click on create btn', () => {
       // -------------- ARRANGE --------------
       const newSession: Session = {
@@ -196,6 +242,30 @@ describe('Sessions spec', () => {
       cy.contains('Session deleted !').should('be.visible');
       cy.get('[data-test="session"]').should('have.length', 0);
     });
+
+    it('an admin cant participate to a session', () => {
+      // -------------- ARRANGE --------------
+      cy.intercept('GET', '/api/teacher', {
+        body: mockTeachers,
+      }).as('teachers');
+
+      cy.intercept('GET', `/api/session/${session.id}`, {
+        body: session,
+      }).as('editASession');
+      cy.intercept('GET', `/api/teacher/${session.teacher_id}`, {
+        body: mockTeachers.find((teacher) => teacher.id === session.teacher_id),
+      });
+
+      // -------------- ACT --------------
+      // click on edit button
+      cy.get('[data-test="detail-btn"]').click();
+
+      cy.wait('@editASession');
+
+      // -------------- ASSERT --------------
+      cy.get('[data-test="unparticipate-btn"]').should('not.exist');
+      cy.get('[data-test="participate-btn"]').should('not.exist');
+    });
   });
 
   describe('Sessions as USER', () => {
@@ -261,7 +331,7 @@ describe('Sessions spec', () => {
       cy.get('[data-test="delete-btn"]').should('not.exist');
     });
 
-    it('should particpate or unparticipate to a session when an user click on participate btn', () => {
+    it('should participate and unparticipate to a session when an user click on participate btn', () => {
       // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
