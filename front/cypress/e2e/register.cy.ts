@@ -4,25 +4,25 @@ describe('Register spec', () => {
   });
 
   it('should register successfully', () => {
-    // ARRANGE: mock http request
+    // -------------- ARRANGE --------------
     cy.intercept('POST', 'api/auth/register', {
       body: {},
     });
 
-    // ACT : fill the form with valid inputs
+    // -------------- ACT --------------
     cy.get('[data-test="firstName"]').type('username'); // length >= 3
     cy.get('[data-test="lastName"]').type('userLastName'); // length >= 3
     cy.get('[data-test="email"]').type('test@email.com'); //  format ...@...
     cy.get('[data-test="password"]').type('password123'); // length >= 3
     cy.get('[data-test="submit-btn"]').click();
 
-    // ASSERT
+    // -------------- ASSERT --------------
     cy.location('pathname').should('equal', '/login');
     cy.get('[data-test="login-form"]').should('be.visible');
   });
 
   it('should detect an error when register failed', () => {
-    // ARRANGE: mock an auth error
+    // -------------- ARRANGE --------------
     cy.intercept('POST', '/api/auth/register', {
       statusCode: 404,
       body: {
@@ -30,32 +30,32 @@ describe('Register spec', () => {
       },
     });
 
-    // ACT: fill the form and submit
+    /// -------------- ACT --------------
     cy.get('[data-test="firstName"]').type('username');
     cy.get('[data-test="lastName"]').type('userLastName');
     cy.get('[data-test="email"]').type('test@email.com');
     cy.get('[data-test="password"]').type('password123');
     cy.get('[data-test="submit-btn"]').click();
 
-    // ASSERT: expect an error message
+    // -------------- ASSERT --------------
     cy.get('[data-test="error"]')
       .should('be.visible')
       .should('have.text', 'An error occurred');
   });
 
   it('should hide the submit button when register form inputs are not valid', () => {
-    // ARRANGE: mock http request
+    // -------------- ARRANGE --------------
     cy.intercept('POST', '/api/auth/register', {
       body: {},
     });
 
-    // ACT : fill the form with invalid inputs
+    // -------------- ACT --------------
     cy.get('[data-test="firstName"]').type('t'); // length < 3
     cy.get('[data-test="lastName"]').type('t'); // length < 3
     cy.get('[data-test="email"]').type('test'); // not format ...@...
     cy.get('[data-test="password"]').type('t'); // length < 3
 
-    // ASSERT
+    // -------------- ASSERT --------------
     cy.get('[data-test="firstName"]').should('have.class', 'ng-invalid');
     cy.get('[data-test="lastName"]').should('have.class', 'ng-invalid');
     cy.get('[data-test="email"]').should('have.class', 'ng-invalid');
