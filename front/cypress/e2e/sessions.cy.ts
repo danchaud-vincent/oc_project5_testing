@@ -33,7 +33,7 @@ describe('Sessions spec', () => {
       cy.wait('@getSessions');
     });
 
-    it.only('should display sessions, session information on edit form and then go back to /sessions', () => {
+    it('should display sessions, session information on edit form and then go back to /sessions', () => {
       // -------------- ARRANGE --------------
       cy.intercept('GET', '/api/teacher', {
         body: mockTeachers,
