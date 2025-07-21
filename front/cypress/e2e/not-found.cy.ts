@@ -1,6 +1,6 @@
 describe('Not found spec', () => {
   beforeEach(() => {
-    cy.visit('/404');
+    cy.visit('/notfoundpage');
   });
 
   it('should display a not found message', () => {
