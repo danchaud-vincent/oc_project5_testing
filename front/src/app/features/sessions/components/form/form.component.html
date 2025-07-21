@@ -2,7 +2,7 @@
   <mat-card>
     <mat-card-title>
       <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button routerLink="/sessions">
+        <button data-test="back-btn" mat-icon-button routerLink="/sessions">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <h1 data-test="createSession-title" *ngIf="!onUpdate">Create session</h1>
