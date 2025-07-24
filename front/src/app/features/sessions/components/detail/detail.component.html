@@ -3,22 +3,22 @@
     <mat-card-title>
       <div fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row" fxLayoutAlign="start center">
-          <button mat-icon-button (click)="back()">
+          <button data-test="back-btn" mat-icon-button (click)="back()">
             <mat-icon>arrow_back</mat-icon>
           </button>
-          <h1>{{session.name | titlecase}}</h1>
+          <h1 data-test="sessionName">{{session.name | titlecase}}</h1>
         </div>
         <div>
-          <button *ngIf="isAdmin" mat-raised-button color="warn" (click)="delete()">
+          <button data-test="delete-btn" *ngIf="isAdmin" mat-raised-button color="warn" (click)="delete()">
             <mat-icon>delete</mat-icon>
             <span class="ml1">Delete</span>
           </button>
-          <div *ngIf="!isAdmin">
-            <button *ngIf="!isParticipate" mat-raised-button color="primary" (click)="participate()">
+          <div data-test="participate-menu" *ngIf="!isAdmin">
+            <button data-test="participate-btn" *ngIf="!isParticipate" mat-raised-button color="primary" (click)="participate()">
               <mat-icon>person_add</mat-icon>
               <span class="ml1">Participate</span>
             </button>
-            <button *ngIf="isParticipate" mat-raised-button color="warn" (click)="unParticipate()">
+            <button data-test="unparticipate-btn" *ngIf="isParticipate" mat-raised-button color="warn" (click)="unParticipate()">
               <mat-icon>person_remove</mat-icon>
               <span class="ml1">Do not participate</span>
             </button>
@@ -34,7 +34,7 @@
         <mat-icon>
           people
         </mat-icon>
-        <span class="ml1">{{ teacher.firstName }} {{ teacher.lastName | uppercase }}</span>
+        <span data-test="sessionTeacher" class="ml1">{{ teacher.firstName }} {{ teacher.lastName | uppercase }}</span>
       </div>
     </mat-card-subtitle>
     <div mat-card-image fxLayoutAlign="center center">
@@ -46,7 +46,7 @@
           <mat-icon>
             group
           </mat-icon>
-          <span class="ml1">{{ session.users.length }} attendees</span>
+          <span data-test="sessionUsers" class="ml1">{{ session.users.length }} attendees</span>
         </div>
         <div fxLayoutAlign="start center">
           <mat-icon>
@@ -55,14 +55,14 @@
           <span class="ml1">{{ session.date | date: 'longDate'}}</span>
         </div>
       </div>
-      <div class="description">
+      <div data-test="sessionDescription" class="description">
         <p>Description:</p>
         {{ session.description }}
         <br>
       </div>
       <div class="date" class="my2" fxLayout="row" fxLayoutAlign="space-between center">
-        <div class="created"><i>Create at: </i> {{ session.createdAt| date: 'longDate'}}</div>
-        <div class="updated"><i>Last update: </i> {{ session.updatedAt| date: 'longDate'}}</div>
+        <div data-test="sessionCreatedDate" class="created"><i>Create at: </i> {{ session.createdAt| date: 'longDate'}}</div>
+        <div data-test="sessionUpdatedDate" class="updated"><i>Last update: </i> {{ session.updatedAt| date: 'longDate'}}</div>
       </div>
     </mat-card-content>
   </mat-card>
