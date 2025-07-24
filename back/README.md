@@ -59,10 +59,10 @@ export JwtKey=your_jwtKey
 **using cmd:**
 
 ```cmd
-export DB_USERNAME=your_database_username
-export DB_PASSWORD=your_database_password
-export DB_NAME=your_database_name
-export JwtKey=your_jwtKey
+set DB_USERNAME=your_database_username
+set DB_PASSWORD=your_database_password
+set DB_NAME=your_database_name
+set JwtKey=your_jwtKey
 ```
 
 **4. Build and run the app using maven**
