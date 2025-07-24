@@ -1,6 +1,22 @@
-# Yoga
+# Yoga Application
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.0.
+
+## Project Description :
+
+This yoga application serves as a platform for students to connect with yoga teachers. A teacher can create a new session in which students can register to participate in the yoga class.
+
+### Projet Goals
+
+The front-end as already been developped earlier. This project aims to create unit and integration tests in order to safeguard the application.
+
+<ins>Unit and Integration Tests :</ins>
+
+- Jest
+
+<ins>End-To-End Tests :</ins>
+
+- Cypress
 
 ## Start the project
 
@@ -20,30 +36,28 @@ Launch Front-end:
 
 > npm run start;
 
-
 ## Ressources
 
-### Mockoon env 
+### Mockoon env
 
 ### Postman collection
 
 For Postman import the collection
 
-> ressources/postman/yoga.postman_collection.json 
+> ressources/postman/yoga.postman_collection.json
 
-by following the documentation: 
+by following the documentation:
 
 https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman
-
 
 ### MySQL
 
 SQL script for creating the schema is available `ressources/sql/script.sql`
 
 By default the admin account is:
+
 - login: yoga@studio.com
 - password: test!1234
-
 
 ### Test
 
