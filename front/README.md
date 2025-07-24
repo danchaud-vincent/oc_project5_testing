@@ -87,7 +87,7 @@ npx jest --coverage
 Coverage report in the browser. Go to `/coverage`:
 
 ```bash
-coverage/index.html
+coverage/jest/lvcov-report/index.html
 ```
 
 for following change:
