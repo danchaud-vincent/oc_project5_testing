@@ -84,7 +84,7 @@ For the coverage:
 npx jest --coverage
 ```
 
-Coverage report in the browser. Go to /coverage:
+Coverage report in the browser. Go to `/coverage`:
 
 ```bash
 coverage/index.html
