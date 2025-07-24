@@ -66,9 +66,9 @@ or
 npx ng serve --open
 ```
 
-### Tests
+## Tests
 
-#### Unit and Integration test
+### Unit and Integration test
 
 **Technologie**: [Jest](https://jestjs.io/docs/getting-started)
 
@@ -96,23 +96,29 @@ for following change:
 npm run test:watch
 ```
 
-#### E2E
+### E2E
+
+**Technologie**: [Cypress](https://docs.cypress.io/app/get-started/why-cypress)
 
 Launching e2e test:
 
-> npm run e2e
+```bash
+npm run e2e
+```
 
 Generate coverage report (you should launch e2e test before):
 
-> npm run e2e:coverage
+```bash
+npm run e2e:coverage
+```
 
 Report is available here:
 
-> front/coverage/lcov-report/index.html
+```bash
+front/coverage/lcov-report/index.html
+```
 
 ## Ressources
-
-### Mockoon env
 
 ### Postman collection
 
@@ -132,3 +138,15 @@ By default the admin account is:
 
 - login: yoga@studio.com
 - password: test!1234
+
+## Technologies used in this project :
+
+- Angular version 14.1.0
+- Jest
+- Cypress
+- Postman
+- MySQL
+
+## Author :
+
+**Danchaud Vincent**
