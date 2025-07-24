@@ -1,7 +1,119 @@
-# Yoga App !
+# Yoga Application : Backend
 
+## Project Description:
+
+This yoga application serves as a platform for students to connect with yoga teachers. A teacher can create a new session in which students can register to participate in the yoga class.
+
+### Project Goals
+
+The back-end as already been developped earlier. This project aims to create unit and integration tests in order to safeguard the backend of the application using:
+
+- JUnit
+- AssertJ
+
+## Installation
+
+Before running the project, make sur your environment meets the following requirements:
+
+### Prerequisites :
+
+- [Java](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html) version 11
+- [Maven](https://maven.apache.org/)
+- [MySQL](https://www.mysql.com/)
+- [Node.js](https://nodejs.org/en) version 16
+
+### Steps to Setup
+
+**1. Clone the application**
+
+```bash
+git clone https://github.com/danchaud-vincent/oc_project5_testing.git
+```
+
+**2. Create MySQL Database**
+
+```bash
+create database DB_NAME;
+```
+
+**3. Setup application.properties**
+
+- Open `back/src/main/resources/application.properties`
+- Change the following environment variables by your information:
+  - `${DB_NAME}`
+  - `${DB_USERNAME}`
+  - `${DB_PASSWORD}`
+  - `${JwtKey}`
+
+or set the env variables in your console before running mvn :
+
+**using bash:**
+
+```bash
+export DB_USERNAME=your_database_username
+export DB_PASSWORD=your_database_password
+export DB_NAME=your_database_name
+export JwtKey=your_jwtKey
+```
+
+**using cmd:**
+
+```cmd
+export DB_USERNAME=your_database_username
+export DB_PASSWORD=your_database_password
+export DB_NAME=your_database_name
+export JwtKey=your_jwtKey
+```
+
+**4. Build and run the app using maven**
+
+- Open the folder `back`:
+
+```bash
+cd back
+```
+
+- Install dependencies:
+
+```bash
+mvn clean install
+```
+
+- Launch the backend:
+
+```bash
+mvn spring-boot:run
+```
+
+## Tests
 
 For launch and generate the jacoco code coverage:
-> mvn clean test
 
-GL
+```bash
+mvn clean test
+```
+
+## Ressources
+
+### Postman collection
+
+For Postman import the collection
+
+> ressources/postman/yoga.postman_collection.json
+
+by following the documentation:
+
+https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman
+
+## Technologies used in this project :
+
+- Java version 11
+- Node.js version 16
+- Maven
+- MySQL
+- JUnit
+- Postman
+
+## Author :
+
+**Danchaud Vincent**
