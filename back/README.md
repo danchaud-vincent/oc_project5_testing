@@ -104,7 +104,11 @@ These tests run against a **_MySQL database running in a Docker container_**.
 
 ### Steps to Setup before running tests
 
-- Open `back/src/main/resources/application-unit-test.properties` and `back/src/main/resources/application-integration-test.properties`
+- Open `back/src/main/resources/application-unit-test.properties`
+
+and
+
+- Open `back/src/main/resources/application-integration-test.properties`
 - Change the following environment variable by your information:
   - `${JwtKey}`
 
