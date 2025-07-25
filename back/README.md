@@ -21,6 +21,7 @@ Before running the project, make sur your environment meets the following requir
 - [Maven](https://maven.apache.org/)
 - [MySQL](https://www.mysql.com/)
 - [Node.js](https://nodejs.org/en) version 16
+- [Docker](https://www.docker.com/)
 
 ### Steps to Setup
 
@@ -87,6 +88,20 @@ mvn spring-boot:run
 
 ## Tests
 
+### Description
+
+**Unit Tests:**
+
+The unit tests are configured to use the following properties file : `back/src/main/resources/application-unit-test.properties`.
+
+This configuration sets up an **_embedded H2 database_**, which is used specifically for testing the repository layer in isolation from the production database.
+
+**Integration Tests:**
+
+The integration tests are configured to use the following properties file : `back/src/main/resources/application-integration-test.properties`.
+
+These tests run against a **_MySQL database running in a Docker container_**.
+
 ### Steps to Setup before running tests
 
 - Open `back/src/main/resources/application-unit-test.properties` and `back/src/main/resources/application-integration-test.properties`
@@ -147,6 +162,7 @@ https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#
 - Node.js version 16
 - Maven
 - MySQL
+- Docker
 - JUnit
 - Postman
 
