@@ -6,7 +6,7 @@ This yoga application serves as a platform for students to connect with yoga tea
 
 ### Project Goals
 
-The back-end as already been developped earlier. This project aims to create unit and integration tests in order to safeguard the backend of the application using:
+The back-end as already been developped earlier. This project aims to **_create unit and integration tests_** in order to safeguard the backend of the application using:
 
 - JUnit
 - AssertJ
