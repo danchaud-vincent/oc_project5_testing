@@ -87,10 +87,46 @@ mvn spring-boot:run
 
 ## Tests
 
+### Steps to Setup before running tests
+
+- Open `back/src/main/resources/application-unit-test.properties` and `back/src/main/resources/application-integration-test.properties`
+- Change the following environment variable by your information:
+  - `${JwtKey}`
+
+or set the env variables in your console before running mvn :
+
+**using bash:**
+
+```bash
+export JwtKey=your_jwtKey
+```
+
+**using cmd:**
+
+```cmd
+set JwtKey=your_jwtKey
+```
+
+### Launch tests
+
+**To run all the tests**
+
 For launch and generate the jacoco code coverage:
 
 ```bash
 mvn clean test
+```
+
+**To run only integration tests**
+
+```bash
+mvn test -Dgroups=integration
+```
+
+**To run only unit tests**
+
+```bash
+mvn test -Dgroups=unit
 ```
 
 ## Ressources
