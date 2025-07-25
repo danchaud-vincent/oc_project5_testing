@@ -1,7 +1,6 @@
 package com.openclassrooms.starterjwt.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,8 @@ import com.openclassrooms.starterjwt.repository.TeacherRepository;
 
 @SpringBootTest
 @Testcontainers
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
+@Tag("integration")
 public class MyIntegrationTest {
 
     @Container
@@ -47,7 +47,6 @@ public class MyIntegrationTest {
     }
 
     @Test
-    @Tag("insert")
     void testInsertAndRetrieveTeacher() {
         Teacher teacher = new Teacher();
         teacher.setFirstName("Marie");
