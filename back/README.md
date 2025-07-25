@@ -104,6 +104,8 @@ These tests run against a **_MySQL database running in a Docker container_**.
 
 ### Steps to Setup before running tests
 
+**1. Setup the properties files**
+
 - Open `back/src/main/resources/application-unit-test.properties`
 
 and
@@ -126,9 +128,13 @@ export JwtKey=your_jwtKey
 set JwtKey=your_jwtKey
 ```
 
+**2. Docker**
+
+To run the integration tests or all of the tests, you need to **_start docker at first_**.
+
 ### Launch tests
 
-**To run all the tests**
+**To run all of the tests**
 
 For launch and generate the jacoco code coverage:
 
