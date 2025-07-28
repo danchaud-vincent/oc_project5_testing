@@ -2,6 +2,8 @@ package com.openclassrooms.starterjwt.unit.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -47,29 +49,26 @@ public class UserRepositoryTests {
         // ASSERT
         assertThat(userSaved).isNotNull();
         assertThat(userSaved.getId()).isGreaterThan(0);
-
-        User userRetrevied = userRepository.findById(user.getId()).get();
-        assertThat(userRetrevied.getEmail()).isEqualTo(user.getEmail());
     }
 
     @Test
     public void UserRepo_findById_ShouldReturnUserFound() {
         // ACT
-        User userFound = userRepository.findById(user.getId()).get();
+        Optional<User> userFound = userRepository.findById(user.getId());
 
         // ASSERT
-        assertThat(userFound).isNotNull();
-        assertThat(userFound.getEmail()).isEqualTo(user.getEmail());
+        assertThat(userFound).isPresent();
+        assertThat(userFound.get().getEmail()).isEqualTo(user.getEmail());
     }
 
     @Test
     public void UserRepo_findByEmail_ShouldReturnUserFound() {
         // ACT
-        User userFoundByEmail = userRepository.findByEmail(user.getEmail()).get();
+        Optional<User> userFoundByEmail = userRepository.findByEmail(user.getEmail());
 
         // ASSERT
-        assertThat(userFoundByEmail).isNotNull();
-        assertThat(userFoundByEmail.getEmail()).isEqualTo(user.getEmail());
+        assertThat(userFoundByEmail).isPresent();
+        assertThat(userFoundByEmail.get().getEmail()).isEqualTo(user.getEmail());
     }
 
     @Test
