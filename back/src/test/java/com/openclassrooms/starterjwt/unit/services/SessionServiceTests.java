@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.openclassrooms.starterjwt.exception.BadRequestException;
 import com.openclassrooms.starterjwt.exception.NotFoundException;
@@ -29,6 +31,8 @@ import com.openclassrooms.starterjwt.repository.SessionRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.services.SessionService;
 
+@ActiveProfiles("unit-test")
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class SessionServiceTests {
 
