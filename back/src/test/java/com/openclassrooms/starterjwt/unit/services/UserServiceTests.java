@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.unit.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -61,10 +62,24 @@ public class UserServiceTests {
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         // ACT
-        userService.findById(user.getId());
+        User userFound = userService.findById(user.getId());
 
         // ASSERT
         verify(userRepository).findById(user.getId());
+        assertThat(userFound.getEmail()).isEqualTo(user.getEmail());
+    }
+
+    @Test
+    public void UserService_findById_ShouldReturnNullWhenNoUserFound() {
+        // ARRANGE
+        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+
+        // ACT
+        User userFound = userService.findById(user.getId());
+
+        // ASSERT
+        verify(userRepository).findById(user.getId());
+        assertThat(userFound).isNull();
     }
 
 }
