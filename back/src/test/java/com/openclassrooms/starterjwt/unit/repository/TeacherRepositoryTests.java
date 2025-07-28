@@ -1,0 +1,70 @@
+package com.openclassrooms.starterjwt.unit.repository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import com.openclassrooms.starterjwt.models.Teacher;
+import com.openclassrooms.starterjwt.repository.TeacherRepository;
+
+@DataJpaTest
+@ActiveProfiles("unit-test")
+@Tag("unit")
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+public class TeacherRepositoryTests {
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    Teacher teacher;
+    Teacher teacherSaved;
+
+    @BeforeEach
+    public void init() {
+        // ARRANGE
+        teacher = Teacher.builder()
+                .lastName("lastNameTeacher")
+                .firstName("firstNameTeacher")
+                .build();
+
+        // save the teacher in db
+        teacherSaved = teacherRepository.save(teacher);
+    }
+
+    @Test
+    public void TeacherRepo_save_ShouldSaveAndReturnTeacher() {
+        // ASSERT
+        assertThat(teacherSaved).isNotNull();
+        assertThat(teacherSaved.getId()).isGreaterThan(0);
+    }
+
+    @Test
+    public void TeacherRepo_findById_ShouldReturnTeacherFound() {
+        // ACT
+        Optional<Teacher> teacherFound = teacherRepository.findById(teacher.getId());
+
+        // ASSERT
+        assertThat(teacherFound).isPresent();
+        assertThat(teacherFound.get().getLastName()).isEqualTo(teacher.getLastName());
+    }
+
+    @Test
+    public void TeacherRepo_findAll_ShouldReturnAListOfTeachers() {
+        // ACT
+        List<Teacher> teachers = teacherRepository.findAll();
+
+        // ASSERT
+        assertThat(teachers.size()).isGreaterThan(0);
+    }
+
+}
