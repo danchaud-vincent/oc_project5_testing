@@ -80,4 +80,17 @@ public class TeacherServiceTests {
         assertThat(teacherFound.getLastName()).isEqualTo(teacher.getLastName());
     }
 
+    @Test
+    public void TeacherService_findById_ShouldReturnNullWhenNoTeacherFound() {
+        // ARRANGE
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // ACT
+        Teacher teacherFound = teacherService.findById(teacher.getId());
+
+        // ASSERT
+        verify(teacherRepository).findById(teacher.getId());
+        assertThat(teacherFound).isNull();
+    }
+
 }
