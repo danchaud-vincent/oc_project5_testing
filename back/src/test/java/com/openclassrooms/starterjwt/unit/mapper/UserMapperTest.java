@@ -3,7 +3,6 @@ package com.openclassrooms.starterjwt.unit.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import com.openclassrooms.starterjwt.models.User;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class UserMapperTests {
+public class UserMapperTest {
 
     @InjectMocks
     private UserMapperImpl userMapperImpl;
@@ -62,7 +61,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toDto_ShouldReturnUserDto() {
+    public void shouldReturnUserDto_whenToDto() {
         // ACT
         UserDto userDtoFromMapper = userMapperImpl.toDto(user);
 
@@ -77,7 +76,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toDto_ShouldReturnNull() {
+    public void shouldReturnNull_whenUserNullToDto() {
         // ACT
         UserDto userDtoFromMapper = userMapperImpl.toDto((User) null);
 
@@ -86,7 +85,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toEntity_ShouldReturnUser() {
+    public void shouldReturnUser_whenToEntity() {
         // ACT
         User userFromMapper = userMapperImpl.toEntity(userDto);
 
@@ -101,7 +100,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toEntity_ShouldReturnNull() {
+    public void shouldReturnNull_whenUserNullToEntity() {
         // ACT
         User userFromMapper = userMapperImpl.toEntity((UserDto) null);
 
@@ -110,7 +109,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toDto_ShouldReturnAListOfUserDto() {
+    public void shouldReturnAListOfUserDto_whenToDtoOfList() {
         // ACT
         List<UserDto> userDtosFromMapper = userMapperImpl.toDto(users);
 
@@ -121,7 +120,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toEntity_ShouldReturnAListOfUser() {
+    public void shouldReturnAListOfUser_whenToEntityOfList() {
         // ACT
         List<User> usersFromMapper = userMapperImpl.toEntity(userDtos);
 
@@ -132,7 +131,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toDto_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenListNullToDto() {
         // ACT
         List<User> listNull = null;
         List<UserDto> userDtosFromMapper = userMapperImpl.toDto(listNull);
@@ -142,7 +141,7 @@ public class UserMapperTests {
     }
 
     @Test
-    public void UserMapper_toEntity_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenListNullToEntity() {
         // ACT
         List<UserDto> listNull = null;
         List<User> usersFromMapper = userMapperImpl.toEntity(listNull);
