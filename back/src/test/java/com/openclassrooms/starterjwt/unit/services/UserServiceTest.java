@@ -49,7 +49,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void UserService_delete_ShouldDeleteUser() {
+    public void shouldDeleteUser_whenUserExists() {
         // ARANGE
         doNothing().when(userRepository).deleteById(user.getId());
 
@@ -61,7 +61,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void UserService_findById_ShouldReturnAUser() {
+    public void shouldReturnAUser_whenFindById() {
         // ARRANGE
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
@@ -74,7 +74,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void UserService_findById_ShouldReturnNullWhenNoUserFound() {
+    public void ShouldReturnNull_WhenNoUserFound() {
         // ARRANGE
         when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
