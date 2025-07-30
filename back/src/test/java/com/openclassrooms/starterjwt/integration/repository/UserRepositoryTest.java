@@ -1,4 +1,4 @@
-package com.openclassrooms.starterjwt.unit.repository;
+package com.openclassrooms.starterjwt.integration.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,18 +8,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 
-@DataJpaTest
-@ActiveProfiles("unit-test")
-@Tag("unit")
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@ActiveProfiles("integration-test")
+@Tag("integration")
 public class UserRepositoryTest {
 
     @Autowired
