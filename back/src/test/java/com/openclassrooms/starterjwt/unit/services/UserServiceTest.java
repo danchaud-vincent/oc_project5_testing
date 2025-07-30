@@ -25,7 +25,7 @@ import com.openclassrooms.starterjwt.services.UserService;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTests {
+public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
