@@ -16,14 +16,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.openclassrooms.starterjwt.models.Session;
-import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 
 @DataJpaTest
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class SessionRepositoryTests {
+public class SessionRepositoryTest {
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -44,14 +43,14 @@ public class SessionRepositoryTests {
     }
 
     @Test
-    public void SessionRepo_save_ShouldSaveAndReturnSession() {
+    public void shouldSaveAndReturnSession_whenSessionSaved() {
         // ASSERT
         assertThat(sessionSaved).isNotNull();
         assertThat(sessionSaved.getId()).isGreaterThan(0);
     }
 
     @Test
-    public void SessionRepo_findAll_ShouldReturnAListOfSession() {
+    public void shouldReturnAListOfSession_whenFindAll() {
         // ACT
         List<Session> sessions = sessionRepository.findAll();
 
@@ -60,7 +59,7 @@ public class SessionRepositoryTests {
     }
 
     @Test
-    public void SessionRepo_findById_ShouldReturnSessionFound() {
+    public void shouldReturnSession_whenSessionFoundById() {
         // ACT
         Optional<Session> sessionFound = sessionRepository.findById(session.getId());
 
@@ -70,7 +69,7 @@ public class SessionRepositoryTests {
     }
 
     @Test
-    public void SessionRepo_deleteById_ShouldDeleteASession() {
+    public void shouldDeleteASession_whenSessionExists() {
         // ACT
         sessionRepository.deleteById(session.getId());
 
