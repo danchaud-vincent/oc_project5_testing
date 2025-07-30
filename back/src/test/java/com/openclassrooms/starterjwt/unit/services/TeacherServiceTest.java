@@ -24,7 +24,7 @@ import com.openclassrooms.starterjwt.services.TeacherService;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class TeacherServiceTests {
+public class TeacherServiceTest {
 
     @Mock
     private TeacherRepository teacherRepository;
@@ -59,7 +59,7 @@ public class TeacherServiceTests {
     }
 
     @Test
-    public void TeacherService_findAll_ShouldReturnAListOfTeachers() {
+    public void ShouldReturnAListOfTeachers_whenFindAll() {
         // ARRANGE
         when(teacherRepository.findAll()).thenReturn(teachers);
 
@@ -72,7 +72,7 @@ public class TeacherServiceTests {
     }
 
     @Test
-    public void TeacherService_findById_ShouldReturnATeacher() {
+    public void ShouldReturnATeacher_whenTeacherFindById() {
         // ARRANGE
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(teacher));
 
@@ -85,7 +85,7 @@ public class TeacherServiceTests {
     }
 
     @Test
-    public void TeacherService_findById_ShouldReturnNullWhenNoTeacherFound() {
+    public void ShouldReturnNull_whenNoTeacherFound() {
         // ARRANGE
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
 
