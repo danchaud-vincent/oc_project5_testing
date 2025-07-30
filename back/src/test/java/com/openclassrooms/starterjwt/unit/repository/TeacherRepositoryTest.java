@@ -21,7 +21,7 @@ import com.openclassrooms.starterjwt.repository.TeacherRepository;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class TeacherRepositoryTests {
+public class TeacherRepositoryTest {
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -42,14 +42,14 @@ public class TeacherRepositoryTests {
     }
 
     @Test
-    public void TeacherRepo_save_ShouldSaveAndReturnTeacher() {
+    public void shouldSaveAndReturnTeacher_whenTeacherSaved() {
         // ASSERT
         assertThat(teacherSaved).isNotNull();
         assertThat(teacherSaved.getId()).isGreaterThan(0);
     }
 
     @Test
-    public void TeacherRepo_findById_ShouldReturnTeacherFound() {
+    public void shouldReturnTeacher_whenTeacherFoundById() {
         // ACT
         Optional<Teacher> teacherFound = teacherRepository.findById(teacher.getId());
 
@@ -59,7 +59,7 @@ public class TeacherRepositoryTests {
     }
 
     @Test
-    public void TeacherRepo_findAll_ShouldReturnAListOfTeachers() {
+    public void shouldReturnAListOfTeachers_whenFindAll() {
         // ACT
         List<Teacher> teachers = teacherRepository.findAll();
 
