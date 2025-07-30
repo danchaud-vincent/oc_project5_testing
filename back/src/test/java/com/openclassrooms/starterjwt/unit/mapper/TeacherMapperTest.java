@@ -20,7 +20,7 @@ import com.openclassrooms.starterjwt.models.Teacher;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class TeacherMapperTests {
+public class TeacherMapperTest {
 
     @InjectMocks
     private TeacherMapperImpl teacherMapperImpl;
@@ -55,7 +55,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toDto_ShouldReturnTeacherDto() {
+    public void shouldReturnTeacherDto_whenToDto() {
         // ACT
         TeacherDto teacherDtoFromMapper = teacherMapperImpl.toDto(teacher);
 
@@ -68,7 +68,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toDto_ShouldReturnNull() {
+    public void shouldReturnNull_whenTeacherNullToDto() {
         // ACT
         TeacherDto teacherDtoFromMapper = teacherMapperImpl.toDto((Teacher) null);
 
@@ -77,7 +77,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toEntity_ShouldReturnTeacher() {
+    public void shouldReturnTeacher_whenToEntity() {
         // ACT
         Teacher teacherFromMapper = teacherMapperImpl.toEntity(teacherDto);
 
@@ -90,7 +90,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toEntity_ShouldReturnNull() {
+    public void shouldReturnNull_whenTeacherDtoNullToEntity() {
         // ACT
         Teacher teacherFromMapper = teacherMapperImpl.toEntity((TeacherDto) null);
 
@@ -99,7 +99,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toDto_ShouldReturnAListOfTeacherDto() {
+    public void shouldReturnAListOfTeacherDto_whenListOfTeacherToDto() {
         // ACT
         List<TeacherDto> teacherDtoFromMapper = teacherMapperImpl.toDto(teachers);
 
@@ -110,7 +110,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toEntity_ShouldReturnAListOfTeacher() {
+    public void shouldReturnAListOfTeacher_whenListOfTeacherDtoToEntity() {
         // ACT
         List<Teacher> teachersFromMapper = teacherMapperImpl.toEntity(teacherDtos);
 
@@ -121,7 +121,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toDto_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenListOfTeacherNullToDto() {
         // ACT
         List<Teacher> listNull = null;
         List<TeacherDto> teacherDtoFromMapper = teacherMapperImpl.toDto(listNull);
@@ -131,7 +131,7 @@ public class TeacherMapperTests {
     }
 
     @Test
-    public void TeacherMapper_toEntity_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenListOfTeacherDtoNullToEntity() {
         // ACT
         List<TeacherDto> listNull = null;
         List<Teacher> usersFromMapper = teacherMapperImpl.toEntity(listNull);
