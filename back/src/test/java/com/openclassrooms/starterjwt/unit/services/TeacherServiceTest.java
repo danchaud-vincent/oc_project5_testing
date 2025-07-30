@@ -59,7 +59,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    public void ShouldReturnAListOfTeachers_whenFindAll() {
+    public void shouldReturnAListOfTeachers_whenFindAll() {
         // ARRANGE
         when(teacherRepository.findAll()).thenReturn(teachers);
 
@@ -72,7 +72,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    public void ShouldReturnATeacher_whenTeacherFindById() {
+    public void shouldReturnATeacher_whenTeacherFindById() {
         // ARRANGE
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(teacher));
 
@@ -85,7 +85,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    public void ShouldReturnNull_whenNoTeacherFound() {
+    public void shouldReturnNull_whenNoTeacherFound() {
         // ARRANGE
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
 

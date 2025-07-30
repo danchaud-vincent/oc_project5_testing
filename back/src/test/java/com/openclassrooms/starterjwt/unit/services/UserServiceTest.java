@@ -73,7 +73,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void ShouldReturnNull_WhenNoUserFound() {
+    public void shouldReturnNull_whenNoUserFound() {
         // ARRANGE
         when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
