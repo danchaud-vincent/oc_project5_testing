@@ -151,7 +151,7 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void shouldReturnNull_whenNotFound() {
+    public void shouldReturnNull_whenSessionNotFound() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -164,7 +164,7 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void shouldReturnAnUpdatedSession_whenUpdate() {
+    public void shouldReturnAnUpdatedSession_whenUpdatedSuccessfull() {
         // ARRANGE
         Long sessionId = 2L;
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
