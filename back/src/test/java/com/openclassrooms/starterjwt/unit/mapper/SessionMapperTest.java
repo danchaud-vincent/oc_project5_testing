@@ -4,11 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,7 @@ import com.openclassrooms.starterjwt.services.TeacherService;
 import com.openclassrooms.starterjwt.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
-public class SessionMapperTests {
+public class SessionMapperTest {
 
     @Mock
     UserService userService;
@@ -117,7 +115,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnSession() {
+    public void shouldReturnSession_whenSessionDtoToEntity() {
         // ARRANGE
         when(teacherService.findById(sessionDto.getTeacher_id())).thenReturn(teacher);
         when(userService.findById(sessionDto.getUsers().get(0))).thenReturn(user);
@@ -136,7 +134,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnSessionWithTeacherNull() {
+    public void shouldReturnSessionWithTeacherNull_whenSessionDtoWithTeacherNull() {
         // ARRANGE
         when(teacherService.findById(sessionDto.getTeacher_id())).thenReturn(null);
         when(userService.findById(sessionDto.getUsers().get(0))).thenReturn(user);
@@ -155,7 +153,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnSessionWithUsersNull() {
+    public void shouldReturnSessionWithUsersNull_whenSessionDtoWithUserNull() {
         // ARRANGE
         when(teacherService.findById(sessionDto.getTeacher_id())).thenReturn(teacher);
         when(userService.findById(sessionDto.getUsers().get(0))).thenReturn(null);
@@ -174,7 +172,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnSessionWithEmptyUsers() {
+    public void shouldReturnSessionWithEmptyUsers_whenSessionDtoWithNoUsers() {
         // ARRANGE
         when(teacherService.findById(sessionDtoWithNoUsers.getTeacher_id())).thenReturn(teacher);
 
@@ -192,7 +190,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnNull() {
+    public void shouldReturnNull_whenSessionDtoNotExistsToEntity() {
         // ACT
         Session sessionFromMapper = sessionMapperImpl.toEntity((SessionDto) null);
 
@@ -201,7 +199,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnAListOfSession() {
+    public void shouldReturnAListOfSession_whenListOfSessionDtosToEntity() {
         // ARRANGE
         when(teacherService.findById(sessionDto.getTeacher_id())).thenReturn(teacher);
         when(userService.findById(sessionDto.getUsers().get(0))).thenReturn(user);
@@ -217,7 +215,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toEntity_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenSessionDtosListNullToEntity() {
         // ACT
         List<SessionDto> listNull = null;
         List<Session> sessionsFromMapper = sessionMapperImpl.toEntity(listNull);
@@ -227,7 +225,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toDto_ShouldReturnSessionDto() {
+    public void shouldReturnSessionDto_whenSessionToDto() {
         // ACT
         SessionDto sessionDtoFromMapper = sessionMapperImpl.toDto(session);
 
@@ -242,7 +240,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toDto_ShouldReturnSessionWithEmptyUsers() {
+    public void shouldReturnSessionDtoWithEmptyUsers_whenSessionWithNoUsersToDto() {
         // ACT
         SessionDto sessionDtoFromMapper = sessionMapperImpl.toDto(sessionWithNoUsers);
 
@@ -257,7 +255,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toDto_ShouldReturnNull() {
+    public void shouldReturnNull_whenSessionNullToDto() {
         // ACT
         SessionDto sessionDtoFromMapper = sessionMapperImpl.toDto((Session) null);
 
@@ -266,7 +264,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toDto_ShouldReturnAListOfSession() {
+    public void shouldReturnAListOfSessionDto_whenListOfSessionsToDto() {
         // ACT
         List<SessionDto> sessionDtosFromMapper = sessionMapperImpl.toDto(sessions);
 
@@ -277,7 +275,7 @@ public class SessionMapperTests {
     }
 
     @Test
-    public void SessionMapper_toDto_ShouldReturnAListNull() {
+    public void shouldReturnAListNull_whenListSessionNullToDto() {
         // ACT
         List<Session> listNull = null;
         List<SessionDto> sessionDtosFromMapper = sessionMapperImpl.toDto(listNull);
