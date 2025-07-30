@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.TeacherService;
 import com.openclassrooms.starterjwt.services.UserService;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class SessionMapperTest {
 
