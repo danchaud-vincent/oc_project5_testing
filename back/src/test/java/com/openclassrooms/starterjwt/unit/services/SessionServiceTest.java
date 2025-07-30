@@ -34,7 +34,7 @@ import com.openclassrooms.starterjwt.services.SessionService;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class SessionServiceTests {
+public class SessionServiceTest {
 
     @Mock
     SessionRepository sessionRepository;
@@ -99,7 +99,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_create_ShouldSaveAndReturnASession() {
+    public void shouldSaveAndReturnASession_whenCreate() {
         // ARRANGE
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
@@ -113,7 +113,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_delete_ShouldDeleteASession() {
+    public void shouldDeleteASession_whenSessionExits() {
         // ARRANGE
         doNothing().when(sessionRepository).deleteById(anyLong());
 
@@ -125,7 +125,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_findAll_ShouldReturnAListOfSession() {
+    public void shouldReturnAListOfSession_whenFindAll() {
         // ARRANGE
         when(sessionRepository.findAll()).thenReturn(sessions);
 
@@ -138,7 +138,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_GetById_ShouldReturnASession() {
+    public void shouldReturnASession_whenSessionExists() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(session));
 
@@ -151,7 +151,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_GetById_ShouldReturnNullWhenNotFound() {
+    public void shouldReturnNull_whenNotFound() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -164,7 +164,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_update_ShouldReturnASession() {
+    public void shouldReturnAnUpdatedSession_whenUpdate() {
         // ARRANGE
         Long sessionId = 2L;
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
@@ -179,7 +179,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_participate_ShouldRegisterAUserToASession() {
+    public void shouldRegisterAUserToASession_whenUserParticipate() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(session));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -197,7 +197,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_participate_ShouldReturnNotFoundException() {
+    public void shouldReturnNotFoundException_whenUserOrSessionDoesntExists() {
         // ARRANGE : user empty, session empty
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -214,7 +214,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_participate_ShouldReturnABadRequest() {
+    public void shouldReturnABadRequest_whenUserAlreadyParticipate() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(sessionWithUser));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -231,7 +231,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_noLongerParticipate_ShouldUnsubscribeUserOfSession() {
+    public void shouldUnsubscribeUserOfSession_whenUserNoLongerParticipate() {
         // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(sessionWithUser));
         when(sessionRepository.save(any(Session.class))).thenReturn(sessionWithUser);
@@ -247,7 +247,7 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_noLongerParticipate_ShouldReturnNotFoundException() {
+    public void shouldReturnNotFoundException_whenSessionNotExits() {
         // ARRANGE : session empty
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -261,8 +261,8 @@ public class SessionServiceTests {
     }
 
     @Test
-    public void SessionService_noLongerParticipate_ShouldReturnBadRequestException() {
-        // ARRANGE : session empty
+    public void shouldReturnBadRequestException_whenUserAlreadyNotParticipate() {
+        // ARRANGE
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(session));
 
         // ACT & ASSERT
