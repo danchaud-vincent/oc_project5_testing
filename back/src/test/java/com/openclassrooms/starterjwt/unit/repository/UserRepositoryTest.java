@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -21,7 +20,7 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 @ActiveProfiles("unit-test")
 @Tag("unit")
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class UserRepositoryTests {
+public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -45,14 +44,14 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepo_save_ShouldSaveAndReturnUser() {
+    public void shouldSaveAndReturnUser_whenUserIsSaved() {
         // ASSERT
         assertThat(userSaved).isNotNull();
         assertThat(userSaved.getId()).isGreaterThan(0);
     }
 
     @Test
-    public void UserRepo_findById_ShouldReturnUserFound() {
+    public void shouldReturnUser_whenUserFoundById() {
         // ACT
         Optional<User> userFound = userRepository.findById(user.getId());
 
@@ -62,7 +61,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepo_findByEmail_ShouldReturnUserFound() {
+    public void shouldReturnUser_whenUserFoundByEmail() {
         // ACT
         Optional<User> userFoundByEmail = userRepository.findByEmail(user.getEmail());
 
@@ -72,7 +71,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepo_existsByEmail_ShouldReturnABoolean() {
+    public void shouldReturnTrue_whenUserExistsByEmail() {
         // ACT
         Boolean userExists = userRepository.existsByEmail(user.getEmail());
 
@@ -81,7 +80,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepo_deleteById_ShouldDeleteUser() {
+    public void shouldDeleteUser_whenUserExists() {
         // ACT
         userRepository.deleteById(user.getId());
 
