@@ -4,18 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
+import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 
-@ActiveProfiles("integration-test")
-@Tag("integration")
-public class UserRepositoryTest {
+public class UserRepositoryTest extends BaseIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -36,6 +34,11 @@ public class UserRepositoryTest {
 
         // ARRANGE : save user in db
         userSaved = userRepository.save(user);
+    }
+
+    @AfterEach
+    public void clean() {
+        userRepository.deleteAll();
     }
 
     @Test
