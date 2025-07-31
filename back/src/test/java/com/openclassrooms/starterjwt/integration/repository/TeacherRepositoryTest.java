@@ -5,18 +5,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
+import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 
-@ActiveProfiles("integration-test")
-@Tag("integration")
-public class TeacherRepositoryTest {
+public class TeacherRepositoryTest extends BaseIntegrationTest {
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -34,6 +32,11 @@ public class TeacherRepositoryTest {
 
         // save the teacher in db
         teacherSaved = teacherRepository.save(teacher);
+    }
+
+    @AfterEach
+    public void clean() {
+        teacherRepository.deleteAll();
     }
 
     @Test
