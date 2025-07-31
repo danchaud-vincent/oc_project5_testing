@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,35 +17,32 @@ public class TeacherRepositoryTest extends BaseIntegrationTest {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    Teacher teacher;
-    Teacher teacherSaved;
-
-    @BeforeEach
-    public void init() {
+    private Teacher createTestTeacher() {
         // ARRANGE
-        teacher = Teacher.builder()
+        Teacher teacher = Teacher.builder()
                 .lastName("lastNameTeacher")
                 .firstName("firstNameTeacher")
                 .build();
 
         // save the teacher in db
-        teacherSaved = teacherRepository.save(teacher);
-    }
-
-    @AfterEach
-    public void clean() {
-        teacherRepository.deleteAll();
+        return teacherRepository.save(teacher);
     }
 
     @Test
     public void shouldSaveAndReturnTeacher_whenTeacherSaved() {
+        // ARRANGE & ACT
+        Teacher teacher = createTestTeacher();
+
         // ASSERT
-        assertThat(teacherSaved).isNotNull();
-        assertThat(teacherSaved.getId()).isGreaterThan(0);
+        assertThat(teacher).isNotNull();
+        assertThat(teacher.getId()).isGreaterThan(0);
     }
 
     @Test
     public void shouldReturnTeacher_whenTeacherFoundById() {
+        // ARRANGE
+        Teacher teacher = createTestTeacher();
+
         // ACT
         Optional<Teacher> teacherFound = teacherRepository.findById(teacher.getId());
 
@@ -58,6 +53,9 @@ public class TeacherRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnAListOfTeachers_whenFindAll() {
+        // ARRANGE
+        createTestTeacher();
+
         // ACT
         List<Teacher> teachers = teacherRepository.findAll();
 
