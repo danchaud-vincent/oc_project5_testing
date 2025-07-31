@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.integration.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -44,11 +45,8 @@ public class UserControllersTest extends BaseIntegrationTest {
     @Autowired
     UserService userService;
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate testRestTemplate;
 
     @Autowired
     public ObjectMapper objectMapper;
@@ -95,7 +93,7 @@ public class UserControllersTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldReturn404_whenNoToken() throws Exception {
+    public void findById_shouldReturn401_whenRequestWithoutToken() throws Exception {
         // ARRANGE
         Map<String, Object> authenticateUser = createAndAuthenticateTestUser();
         User user = (User) authenticateUser.get("user");
@@ -104,15 +102,15 @@ public class UserControllersTest extends BaseIntegrationTest {
         headers.set("Authorization", "");
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        // When
-        ResponseEntity<String> response = restTemplate.exchange(
-                "http://localhost:" + port + "/api/user/" + user.getId(),
+        // ACT
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                "/api/user/" + user.getId(),
                 HttpMethod.GET,
                 entity,
                 String.class);
 
-        // Then
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        // ASSERT
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     // @Test
