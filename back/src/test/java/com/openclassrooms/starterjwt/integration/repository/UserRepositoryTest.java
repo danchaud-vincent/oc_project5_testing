@@ -3,9 +3,6 @@ package com.openclassrooms.starterjwt.integration.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,13 +15,8 @@ public class UserRepositoryTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User user;
-    private User userSaved;
-
-    @BeforeEach
-    public void init() {
-        // ARRANGE
-        user = User.builder()
+    private User createTestUser() {
+        User user = User.builder()
                 .email("user@email.com")
                 .lastName("lastName")
                 .firstName("firstName")
@@ -33,23 +25,24 @@ public class UserRepositoryTest extends BaseIntegrationTest {
                 .build();
 
         // ARRANGE : save user in db
-        userSaved = userRepository.save(user);
-    }
-
-    @AfterEach
-    public void clean() {
-        userRepository.deleteAll();
+        return userRepository.save(user);
     }
 
     @Test
     public void shouldSaveAndReturnUser_whenUserIsSaved() {
+        // ARRANGE & ACT
+        User user = createTestUser();
+
         // ASSERT
-        assertThat(userSaved).isNotNull();
-        assertThat(userSaved.getId()).isGreaterThan(0);
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isGreaterThan(0);
     }
 
     @Test
     public void shouldReturnUser_whenUserFoundById() {
+        // ARRANGE
+        User user = createTestUser();
+
         // ACT
         Optional<User> userFound = userRepository.findById(user.getId());
 
@@ -60,6 +53,9 @@ public class UserRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnUser_whenUserFoundByEmail() {
+        // ARRANGE
+        User user = createTestUser();
+
         // ACT
         Optional<User> userFoundByEmail = userRepository.findByEmail(user.getEmail());
 
@@ -70,6 +66,9 @@ public class UserRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnTrue_whenUserExistsByEmail() {
+        // ARRANGE
+        User user = createTestUser();
+
         // ACT
         Boolean userExists = userRepository.existsByEmail(user.getEmail());
 
@@ -79,6 +78,9 @@ public class UserRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldDeleteUser_whenUserExists() {
+        // ARRANGE
+        User user = createTestUser();
+
         // ACT
         userRepository.deleteById(user.getId());
 
