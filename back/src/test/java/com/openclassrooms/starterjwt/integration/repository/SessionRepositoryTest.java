@@ -7,17 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-
+import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 
-@ActiveProfiles("integration-test")
-@Tag("integration")
-public class SessionRepositoryTest {
+public class SessionRepositoryTest extends BaseIntegrationTest {
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -35,6 +31,11 @@ public class SessionRepositoryTest {
                 .build();
 
         sessionSaved = sessionRepository.save(session);
+    }
+
+    @BeforeEach
+    public void clean() {
+        sessionRepository.deleteAll();
     }
 
     @Test
