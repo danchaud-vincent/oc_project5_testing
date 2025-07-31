@@ -42,7 +42,7 @@ public class SessionRepositoryTest extends BaseIntegrationTest {
     @Test
     public void shouldReturnAListOfSession_whenFindAll() {
         // ARRANGE
-        Session session = createTestSession();
+        createTestSession();
 
         // ACT
         List<Session> sessions = sessionRepository.findAll();
