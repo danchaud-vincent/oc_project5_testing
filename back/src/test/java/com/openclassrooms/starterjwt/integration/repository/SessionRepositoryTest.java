@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
@@ -19,35 +17,33 @@ public class SessionRepositoryTest extends BaseIntegrationTest {
     @Autowired
     private SessionRepository sessionRepository;
 
-    private Session session;
-    private Session sessionSaved;
-
-    @BeforeEach
-    public void init() {
-        // ARRANGE
-        session = Session.builder()
+    private Session createTestSession() {
+        Session session = Session.builder()
                 .name("a session")
                 .date(new Date())
                 .description("description")
                 .build();
 
-        sessionSaved = sessionRepository.save(session);
-    }
+        Session sessionSaved = sessionRepository.save(session);
 
-    @AfterEach
-    public void clean() {
-        sessionRepository.deleteAll();
+        return sessionSaved;
     }
 
     @Test
     public void shouldSaveAndReturnSession_whenSessionSaved() {
+        // ARRANGE
+        Session session = createTestSession();
+
         // ASSERT
-        assertThat(sessionSaved).isNotNull();
-        assertThat(sessionSaved.getId()).isGreaterThan(0);
+        assertThat(session).isNotNull();
+        assertThat(session.getId()).isGreaterThan(0);
     }
 
     @Test
     public void shouldReturnAListOfSession_whenFindAll() {
+        // ARRANGE
+        Session session = createTestSession();
+
         // ACT
         List<Session> sessions = sessionRepository.findAll();
 
@@ -57,6 +53,9 @@ public class SessionRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnSession_whenSessionFoundById() {
+        // ARRANGE
+        Session session = createTestSession();
+
         // ACT
         Optional<Session> sessionFound = sessionRepository.findById(session.getId());
 
@@ -67,6 +66,9 @@ public class SessionRepositoryTest extends BaseIntegrationTest {
 
     @Test
     public void shouldDeleteASession_whenSessionExists() {
+        // ARRANGE
+        Session session = createTestSession();
+
         // ACT
         sessionRepository.deleteById(session.getId());
 
