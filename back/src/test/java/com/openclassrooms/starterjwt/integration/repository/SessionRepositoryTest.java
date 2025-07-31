@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class SessionRepositoryTest extends BaseIntegrationTest {
         sessionSaved = sessionRepository.save(session);
     }
 
-    @BeforeEach
+    @AfterEach
     public void clean() {
         sessionRepository.deleteAll();
     }
