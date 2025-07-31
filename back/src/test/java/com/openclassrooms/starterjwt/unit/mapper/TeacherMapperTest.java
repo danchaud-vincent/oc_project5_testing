@@ -11,13 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.mapper.TeacherMapperImpl;
 import com.openclassrooms.starterjwt.models.Teacher;
 
-@ActiveProfiles("unit-test")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class TeacherMapperTest {
