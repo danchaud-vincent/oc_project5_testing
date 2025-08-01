@@ -1,6 +1,5 @@
 package com.openclassrooms.starterjwt.integration;
 
-import javax.transaction.Transactional;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -10,7 +9,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("integration-test")
 @Tag("integration")
 @Testcontainers
-@Transactional
 public abstract class BaseIntegrationTest {
 
     @DynamicPropertySource
