@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,10 +22,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.starterjwt.dto.UserDto;
 import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
 import com.openclassrooms.starterjwt.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
@@ -36,8 +40,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllersTest extends BaseIntegrationTest {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     UserMapper userMapper;
@@ -63,6 +71,11 @@ public class UserControllersTest extends BaseIntegrationTest {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @AfterEach
+    public void clean() {
+        userRepository.deleteAll();
+    }
+
     private Map<String, Object> createAndAuthenticateTestUser() {
         String userEmail = "yoga@studio.com";
         String userPassword = "test!1234";
@@ -76,7 +89,7 @@ public class UserControllersTest extends BaseIntegrationTest {
                 .admin(true)
                 .build();
 
-        userRepository.save(newUSer);
+        userRepository.saveAndFlush(newUSer);
 
         // Generate a token for the user
         Authentication authentication = authenticationManager.authenticate(
@@ -95,8 +108,8 @@ public class UserControllersTest extends BaseIntegrationTest {
     @Test
     public void findById_shouldReturn401_whenRequestWithoutToken() throws Exception {
         // ARRANGE
-        Map<String, Object> authenticateUser = createAndAuthenticateTestUser();
-        User user = (User) authenticateUser.get("user");
+        Map<String, Object> authenticateUserMap = createAndAuthenticateTestUser();
+        User user = (User) authenticateUserMap.get("user");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "");
@@ -113,19 +126,30 @@ public class UserControllersTest extends BaseIntegrationTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
-    // @Test
-    // public void shouldReturn200_whenUserFoundById() throws Exception {
-    // // ARRANGE
-    // Map<String, Object> authenticateUser = createAndAuthenticateTestUser();
-    // User user = (User) authenticateUser.get("user");
-    // String token = (String) authenticateUser.get("token");
+    @Test
+    public void findById_shouldReturn200AndUSerDto_whenRequestWithValidToken() {
+        // ARRANGE
+        Map<String, Object> authenticateUserMap = createAndAuthenticateTestUser();
+        User user = (User) authenticateUserMap.get("user");
+        String token = (String) authenticateUserMap.get("token");
 
-    // // ACT
-    // ResultActions response = mockMvc.perform(get("/api/user/{id}", user.getId())
-    // .header("Authorization", "Bearer " + token));
+        // set headers for http request
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-    // // ASSERT
-    // response.andExpect(status().isOk());
-    // }
+        // ACT
+        ResponseEntity<UserDto> response = testRestTemplate.exchange(
+                "/api/user/" + user.getId(),
+                HttpMethod.GET,
+                entity,
+                UserDto.class);
+
+        UserDto responseUserDto = response.getBody();
+
+        // ASSERT
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseUserDto.getEmail()).isEqualTo(user.getEmail());
+    }
 
 }
