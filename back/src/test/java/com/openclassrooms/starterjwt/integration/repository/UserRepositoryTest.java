@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 
 @DataJpaTest
+@Transactional
 public class UserRepositoryTest extends BaseIntegrationTest {
 
     @Autowired
