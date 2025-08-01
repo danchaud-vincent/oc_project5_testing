@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Tag("controller")
+@Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllersTest extends BaseIntegrationTest {
 
@@ -41,16 +41,13 @@ public class UserControllersTest extends BaseIntegrationTest {
     private int port;
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
-
-    @Autowired
-    public ObjectMapper objectMapper;
 
     @Autowired
     private UserRepository userRepository;
