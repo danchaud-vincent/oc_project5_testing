@@ -26,23 +26,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
-import com.openclassrooms.starterjwt.mapper.TeacherMapper;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
-import com.openclassrooms.starterjwt.services.TeacherService;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TeacherControllerIT extends BaseIntegrationIT {
-
-    @Autowired
-    private TeacherMapper teacherMapper;
-
-    @Autowired
-    private TeacherService teacherService;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -62,10 +54,8 @@ public class TeacherControllerIT extends BaseIntegrationIT {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private User user;
     private String token;
     private Teacher teacher1;
-    private Teacher teacher2;
 
     private Map<String, Object> createAndAuthenticateTestUser() {
         String userEmail = "yoga@studio.com";
@@ -100,7 +90,6 @@ public class TeacherControllerIT extends BaseIntegrationIT {
     public void init() {
         // Create a user and authenticate
         Map<String, Object> authenticateUserMap = createAndAuthenticateTestUser();
-        user = (User) authenticateUserMap.get("user");
         token = (String) authenticateUserMap.get("token");
 
         // create two teachers in DB
@@ -109,13 +98,7 @@ public class TeacherControllerIT extends BaseIntegrationIT {
                 .firstName("teacher1FirstName")
                 .build();
 
-        Teacher teacher2_build = Teacher.builder()
-                .lastName("teacher2LastName")
-                .firstName("teacher2FirstName")
-                .build();
-
         teacher1 = teacherRepository.saveAndFlush(teacher1_build);
-        teacher2 = teacherRepository.saveAndFlush(teacher2_build);
     }
 
     @AfterEach

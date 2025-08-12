@@ -22,11 +22,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.openclassrooms.starterjwt.dto.UserDto;
 import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
-import com.openclassrooms.starterjwt.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
-import com.openclassrooms.starterjwt.services.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,12 +36,6 @@ public class UserControllersIT extends BaseIntegrationIT {
 
     @LocalServerPort
     private int port;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private TestRestTemplate testRestTemplate;

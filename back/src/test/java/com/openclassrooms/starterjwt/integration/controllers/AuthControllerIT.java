@@ -133,8 +133,6 @@ public class AuthControllerIT extends BaseIntegrationIT {
                 entity,
                 String.class);
 
-        String responseString = response.getBody();
-
         // ASSERT
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
