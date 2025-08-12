@@ -36,7 +36,7 @@ import com.openclassrooms.starterjwt.services.TeacherService;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TeacherControllerTest extends BaseIntegrationIT {
+public class TeacherControllerIT extends BaseIntegrationIT {
 
     @Autowired
     private TeacherMapper teacherMapper;

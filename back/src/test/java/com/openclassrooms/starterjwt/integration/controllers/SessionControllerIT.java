@@ -37,7 +37,7 @@ import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SessionControllerTest extends BaseIntegrationIT {
+public class SessionControllerIT extends BaseIntegrationIT {
 
     @Autowired
     private TestRestTemplate testRestTemplate;

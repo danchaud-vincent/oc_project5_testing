@@ -36,7 +36,7 @@ import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class AuthControllerTest {
+public class AuthControllerTests {
 
     @Mock
     AuthenticationManager authenticationManager;

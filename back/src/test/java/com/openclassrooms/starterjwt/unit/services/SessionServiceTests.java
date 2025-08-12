@@ -32,7 +32,7 @@ import com.openclassrooms.starterjwt.services.SessionService;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class SessionServiceTest {
+public class SessionServiceTests {
 
     @Mock
     SessionRepository sessionRepository;

@@ -22,7 +22,7 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthControllerTest extends BaseIntegrationIT {
+public class AuthControllerIT extends BaseIntegrationIT {
 
     @Autowired
     private TestRestTemplate testRestTemplate;

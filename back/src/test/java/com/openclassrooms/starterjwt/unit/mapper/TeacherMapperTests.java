@@ -18,7 +18,7 @@ import com.openclassrooms.starterjwt.models.Teacher;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class TeacherMapperTest {
+public class TeacherMapperTests {
 
     @InjectMocks
     private TeacherMapperImpl teacherMapperImpl;

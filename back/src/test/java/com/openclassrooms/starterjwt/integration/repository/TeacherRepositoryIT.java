@@ -16,7 +16,7 @@ import com.openclassrooms.starterjwt.repository.TeacherRepository;
 
 @DataJpaTest
 @Transactional
-public class TeacherRepositoryTest extends BaseIntegrationIT {
+public class TeacherRepositoryIT extends BaseIntegrationIT {
 
     @Autowired
     private TeacherRepository teacherRepository;

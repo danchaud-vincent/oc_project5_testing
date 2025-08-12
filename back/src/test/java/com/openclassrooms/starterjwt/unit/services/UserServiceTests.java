@@ -22,7 +22,7 @@ import com.openclassrooms.starterjwt.services.UserService;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserServiceTests {
 
     @Mock
     private UserRepository userRepository;

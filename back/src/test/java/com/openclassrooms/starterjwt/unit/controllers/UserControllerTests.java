@@ -33,7 +33,7 @@ import com.openclassrooms.starterjwt.services.UserService;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class UserControllerTest {
+public class UserControllerTests {
 
     @Mock
     private UserService userService;

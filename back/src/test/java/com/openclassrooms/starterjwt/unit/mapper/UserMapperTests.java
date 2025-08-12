@@ -18,7 +18,7 @@ import com.openclassrooms.starterjwt.models.User;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
-public class UserMapperTest {
+public class UserMapperTests {
 
     @InjectMocks
     private UserMapperImpl userMapperImpl;

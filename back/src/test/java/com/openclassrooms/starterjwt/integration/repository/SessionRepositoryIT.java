@@ -17,7 +17,7 @@ import com.openclassrooms.starterjwt.repository.SessionRepository;
 
 @DataJpaTest
 @Transactional
-public class SessionRepositoryTest extends BaseIntegrationIT {
+public class SessionRepositoryIT extends BaseIntegrationIT {
 
     @Autowired
     private SessionRepository sessionRepository;
