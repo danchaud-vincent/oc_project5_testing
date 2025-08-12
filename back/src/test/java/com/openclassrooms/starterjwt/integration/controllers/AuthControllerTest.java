@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
+import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.payload.request.LoginRequest;
 import com.openclassrooms.starterjwt.payload.request.SignupRequest;
@@ -22,7 +22,7 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthControllerTest extends BaseIntegrationTest {
+public class AuthControllerTest extends BaseIntegrationIT {
 
     @Autowired
     private TestRestTemplate testRestTemplate;

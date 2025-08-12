@@ -10,13 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
+
+import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 
 @DataJpaTest
 @Transactional
-public class SessionRepositoryTest extends BaseIntegrationTest {
+public class SessionRepositoryTest extends BaseIntegrationIT {
 
     @Autowired
     private SessionRepository sessionRepository;

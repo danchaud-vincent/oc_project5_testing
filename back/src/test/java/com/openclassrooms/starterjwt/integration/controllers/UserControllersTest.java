@@ -22,7 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.starterjwt.dto.UserDto;
-import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
+import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
 import com.openclassrooms.starterjwt.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
@@ -35,7 +35,7 @@ import java.util.Optional;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserControllersTest extends BaseIntegrationTest {
+public class UserControllersTest extends BaseIntegrationIT {
 
     @LocalServerPort
     private int port;

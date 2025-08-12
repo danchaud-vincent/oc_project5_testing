@@ -25,7 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.openclassrooms.starterjwt.dto.TeacherDto;
-import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
+import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
 import com.openclassrooms.starterjwt.mapper.TeacherMapper;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.models.User;
@@ -36,7 +36,7 @@ import com.openclassrooms.starterjwt.services.TeacherService;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TeacherControllerTest extends BaseIntegrationTest {
+public class TeacherControllerTest extends BaseIntegrationIT {
 
     @Autowired
     private TeacherMapper teacherMapper;

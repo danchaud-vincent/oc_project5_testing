@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("integration-test")
 @Tag("integration")
 @Testcontainers
-public abstract class BaseIntegrationTest {
+public abstract class BaseIntegrationIT {
 
     @DynamicPropertySource
     static void overrideProps(DynamicPropertyRegistry registry) {

@@ -26,7 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.openclassrooms.starterjwt.dto.SessionDto;
-import com.openclassrooms.starterjwt.integration.BaseIntegrationTest;
+import com.openclassrooms.starterjwt.integration.BaseIntegrationIT;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.models.User;
@@ -37,7 +37,7 @@ import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SessionControllerTest extends BaseIntegrationTest {
+public class SessionControllerTest extends BaseIntegrationIT {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
