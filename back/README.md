@@ -106,11 +106,8 @@ These tests run against a **_MySQL database running in a Docker container_**.
 
 **1. Setup the properties files**
 
-- Open `back/src/main/resources/application-unit-test.properties`
-
-and
-
 - Open `back/src/main/resources/application-integration-test.properties`
+
 - Change the following environment variable by your information:
   - `${JwtKey}`
 
@@ -119,12 +116,18 @@ or set the env variables in your console before running mvn :
 **using bash:**
 
 ```bash
+export DB_USERNAME=your_database_username
+export DB_PASSWORD=your_database_password
+export DB_NAME=your_database_name
 export JwtKey=your_jwtKey
 ```
 
 **using cmd:**
 
 ```cmd
+set DB_USERNAME=your_database_username
+set DB_PASSWORD=your_database_password
+set DB_NAME=your_database_name
 set JwtKey=your_jwtKey
 ```
 
@@ -138,21 +141,19 @@ To run the integration tests or all of the tests, you need to **_start docker at
 
 For launch and generate the jacoco code coverage:
 
+**To run only unit tests**
+
 ```bash
 mvn clean test
 ```
 
-**To run only integration tests**
+**To run unit and integration tests**
 
 ```bash
-mvn test -Dgroups=integration
+mvn clean verify
 ```
 
-**To run only unit tests**
-
-```bash
-mvn test -Dgroups=unit
-```
+> You can find the jacoco coverage reports in `back/target/site`.
 
 ## Ressources
 
