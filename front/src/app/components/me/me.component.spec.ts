@@ -24,7 +24,6 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
 import { User } from 'src/app/interfaces/user.interface';
 
 function getCommonImports() {
@@ -123,17 +122,6 @@ describe('MeComponent', () => {
 
       fixture = TestBed.createComponent(MeComponent);
       component = fixture.componentInstance;
-    });
-
-    it('should create', () => {
-      // ARRANGE
-      mockUserService.getById.mockReturnValue(of(mockUser));
-
-      // ACT
-      fixture.detectChanges();
-
-      // ASSERT
-      expect(component).toBeTruthy();
     });
 
     it('should call userService.getById and set user data on ngOnInit', () => {

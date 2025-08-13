@@ -277,7 +277,6 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
       tick();
 
-      const { errorEl } = getHtmlElements();
       // ASSERT
       expect(spySessionLogin).toHaveBeenCalledWith(
         mockSessionService.sessionInformation
