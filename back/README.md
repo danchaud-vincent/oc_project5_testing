@@ -13,6 +13,8 @@ The back-end has already been developped earlier. This project aims to **_create
 
 ## Installation
 
+> Note: The path back is relative to the root of the project (where you cloned the repo), not your current directory.
+
 Before running the project, make sur your environment meets the following requirements:
 
 ### Prerequisites :
