@@ -20,6 +20,8 @@ The front-end as already been developped earlier. This project aims to create un
 
 ## Installation :
 
+> Note: The path front is relative to the root of the project (where you cloned the repo), not your current directory.
+
 Before running the project, make sur your environment meets the following requirements:
 
 ### Prerequisites :
@@ -42,7 +44,7 @@ Otherwise, the tests are available and can be execute without the backend runnin
 git clone https://github.com/danchaud-vincent/oc_project5_testing.git
 ```
 
-**2. Go inside the front folder**
+**2. Go inside the front folder (from the project root)**
 
 ```bash
 cd front
