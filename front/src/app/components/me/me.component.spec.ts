@@ -2,6 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
 } from '@angular/core/testing';
@@ -13,7 +14,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SessionService } from '../../services/session.service';
 
 import { MeComponent } from './me.component';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -24,7 +25,6 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
 import { User } from 'src/app/interfaces/user.interface';
 
 function getCommonImports() {
@@ -125,17 +125,6 @@ describe('MeComponent', () => {
       component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-      // ARRANGE
-      mockUserService.getById.mockReturnValue(of(mockUser));
-
-      // ACT
-      fixture.detectChanges();
-
-      // ASSERT
-      expect(component).toBeTruthy();
-    });
-
     it('should call userService.getById and set user data on ngOnInit', () => {
       // ARRANGE
       mockUserService.getById.mockReturnValue(of(mockUser));
@@ -203,25 +192,34 @@ describe('MeComponent', () => {
       component = fixture.componentInstance;
     });
 
+    afterEach(() => {
+      httpMock.verify();
+    });
+
     it('should fetch ADMIN data and display ADMIN specific data in the DOM on init', () => {
       // ARRANGE
       sessionService.sessionInformation =
         mockSessionServiceAdmin.sessionInformation;
 
-      const spyGetById = jest
-        .spyOn(userService, 'getById')
-        .mockReturnValue(of(mockAdmin));
       const sessionId: string =
         mockSessionServiceAdmin.sessionInformation.id.toString();
       const pipe = new DatePipe('en-US');
       const createdAt = pipe.transform(mockAdmin.createdAt, 'longDate');
       const updatedAt = pipe.transform(mockAdmin.updatedAt, 'longDate');
 
-      // ACT
+      // ACT ngOnInit
       fixture.detectChanges();
 
+      // ASSERT HTTP REQUEST
+      const reqGetByIt = httpMock.expectOne(
+        `api/user/${mockSessionServiceAdmin.sessionInformation.id}`
+      );
+      expect(reqGetByIt.request.method).toBe('GET');
+      reqGetByIt.flush(mockAdmin); // return a mockAdmin
+
+      fixture.detectChanges(); // update the DOM
+
       // ASSERT
-      expect(spyGetById).toHaveBeenCalledWith(sessionId);
       expect(getByDataTest(fixture, 'name').textContent).toBe(
         `Name: ${mockAdmin.firstName} ${mockAdmin.lastName.toUpperCase()}`
       );
@@ -246,6 +244,16 @@ describe('MeComponent', () => {
 
       // ACT
       fixture.detectChanges();
+
+      // ASSERT HTTP REQUEST
+      const reqGetByIt = httpMock.expectOne(
+        `api/user/${mockSessionServiceAdmin.sessionInformation.id}`
+      );
+      expect(reqGetByIt.request.method).toBe('GET');
+      reqGetByIt.flush(mockAdmin); // return a mockAdmin
+
+      fixture.detectChanges(); // update the DOM
+
       const btnBack = getByDataTest(fixture, 'back-btn') as HTMLButtonElement;
       btnBack.click();
 
@@ -261,7 +269,7 @@ describe('MeComponent', () => {
       sessionService.sessionInformation =
         mockSessionServiceUser.sessionInformation;
 
-      // ngOnInit
+      // ACT : ngOnInit
       fixture.detectChanges();
 
       // ASSERT HTTP REQUEST
@@ -273,7 +281,7 @@ describe('MeComponent', () => {
 
       expect(component.user).toEqual(mockUser);
 
-      fixture.detectChanges();
+      fixture.detectChanges(); // update the DOM
 
       // get delete button
       const btnDeleteEl = getByDataTest(
@@ -302,8 +310,48 @@ describe('MeComponent', () => {
       );
       expect(spyLogOut).toHaveBeenCalled();
       expect(spyNavigate).toHaveBeenCalledWith(['/']);
-
-      httpMock.verify();
     }));
+
+    it('should throw an error when delete fail, the snackbar does not open and the logout fail', () => {
+      // ARRANGE
+      jest
+        .spyOn(userService, 'delete')
+        .mockReturnValue(throwError(() => new Error('Delete failed')));
+      const spyOpen = jest.spyOn(matSnackBar, 'open');
+      const spyLogOut = jest.spyOn(sessionService, 'logOut');
+      const spyNavigate = jest.spyOn(router, 'navigate');
+
+      sessionService.sessionInformation =
+        mockSessionServiceUser.sessionInformation;
+
+      // ngOnInit
+      fixture.detectChanges();
+
+      // ASSERT HTTP REQUEST
+      const reqGetByIt = httpMock.expectOne(
+        `api/user/${mockSessionServiceUser.sessionInformation.id}`
+      );
+      expect(reqGetByIt.request.method).toBe('GET');
+      reqGetByIt.flush(mockUser); // return a mockUser
+
+      expect(component.user).toEqual(mockUser);
+
+      fixture.detectChanges(); // update the DOM
+
+      // get delete button
+      const btnDeleteEl = getByDataTest(
+        fixture,
+        'delete-btn'
+      ) as HTMLButtonElement;
+
+      // Delete
+      expect(btnDeleteEl).not.toBeNull(); // component should show the delete btn for a user
+      btnDeleteEl.click();
+
+      // ASSERT
+      expect(spyOpen).not.toHaveBeenCalled();
+      expect(spyLogOut).not.toHaveBeenCalled();
+      expect(spyNavigate).not.toHaveBeenCalledWith(['/']);
+    });
   });
 });

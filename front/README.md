@@ -8,7 +8,7 @@ This yoga application serves as a platform for students to connect with yoga tea
 
 ### Projet Goals
 
-The front-end as already been developped earlier. This project aims to create unit and integration tests in order to safeguard the application.
+The front-end has already been developped earlier. This project aims to create unit and integration tests in order to safeguard the application.
 
 <ins>Unit and Integration Tests :</ins>
 
@@ -19,6 +19,8 @@ The front-end as already been developped earlier. This project aims to create un
 - Cypress
 
 ## Installation :
+
+> Note: The path front is relative to the root of the project (where you cloned the repo), not your current directory.
 
 Before running the project, make sur your environment meets the following requirements:
 
@@ -42,7 +44,7 @@ Otherwise, the tests are available and can be execute without the backend runnin
 git clone https://github.com/danchaud-vincent/oc_project5_testing.git
 ```
 
-**2. Go inside the front folder**
+**2. Go inside the front folder (from the project root)**
 
 ```bash
 cd front

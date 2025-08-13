@@ -13,7 +13,7 @@ import { SessionService } from 'src/app/services/session.service';
 import { ListComponent } from './list.component';
 import { Session } from '../../interfaces/session.interface';
 import { SessionApiService } from '../../services/session-api.service';
-import { first, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
   HttpClientTestingModule,
   HttpTestingController,

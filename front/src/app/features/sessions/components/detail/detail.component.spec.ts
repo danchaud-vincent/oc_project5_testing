@@ -151,13 +151,6 @@ describe('DetailComponent', () => {
         component = fixture.componentInstance;
       });
 
-      it('should create the component', () => {
-        // ACT
-        fixture.detectChanges();
-        // ASSERT
-        expect(component).toBeTruthy();
-      });
-
       it('should load session and teacher info on init', () => {
         // ARRANGE
         const isParticipate: boolean = mockSession.users.some(
