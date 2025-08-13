@@ -8,7 +8,7 @@ This yoga application serves as a platform for students to connect with yoga tea
 
 ### Projet Goals
 
-The front-end as already been developped earlier. This project aims to create unit and integration tests in order to safeguard the application.
+The front-end has already been developped earlier. This project aims to create unit and integration tests in order to safeguard the application.
 
 <ins>Unit and Integration Tests :</ins>
 
