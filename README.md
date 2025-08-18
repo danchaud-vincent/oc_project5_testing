@@ -14,7 +14,7 @@ The back-end and front-end have already been developped earlier. This project ai
 
 **More details for the Back :**
 
-[README Front-end](./back/README.md)
+[README Back-end](./back/README.md)
 
 ### Prerequisites :
 
