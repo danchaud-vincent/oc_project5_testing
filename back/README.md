@@ -92,12 +92,6 @@ mvn spring-boot:run
 
 ### Description
 
-**Unit Tests:**
-
-The unit tests are configured to use the following properties file : `back/src/main/resources/application-unit-test.properties`.
-
-This configuration sets up an **_embedded H2 database_**, which is used specifically for testing the repository layer in isolation from the production database.
-
 **Integration Tests:**
 
 The integration tests are configured to use the following properties file : `back/src/main/resources/application-integration-test.properties`.
